@@ -1,0 +1,111 @@
+﻿<Page
+    x:Class="Monocast.Views.EpisodeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Monocast.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource LargeWindowSnapPoint}"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ArtworkImg.Width" Value="300"/>
+                        <Setter Target="ArtworkImg.Height" Value="300"/>
+                        <Setter Target="TitlePanel.(RelativePanel.AlignTopWith)" Value="ArtworkContainer"/>
+                        <Setter Target="ButtonPanel.(RelativePanel.AlignBottomWith)" Value="ArtworkContainer"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource MediumWindowSnapPoint}"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="TitlePanel.(RelativePanel.RightOf)" Value="ArtworkContainer"/>
+                        <Setter Target="ButtonPanel.HorizontalAlignment" Value="Left"/>
+                        <Setter Target="ButtonPanel.Margin" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource MinWindowSnapPoint}"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="TitlePanel.(RelativePanel.Below)" Value="ArtworkContainer"/>
+                        <Setter Target="TitlePanel.(RelativePanel.AlignLeftWithPanel)" Value="True"/>
+                        <Setter Target="TitlePanel.HorizontalAlignment" Value="Center"/>
+                        <Setter Target="ArtworkContainer.(RelativePanel.AlignLeftWithPanel)" Value="True"/>
+                        <Setter Target="ArtworkContainer.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="ButtonPanel.(RelativePanel.AlignLeftWithPanel)" Value="True"/>
+                        <Setter Target="ButtonPanel.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="DescriptionWebView.(RelativePanel.Below)" Value="ButtonPanel"/>
+                        <Setter Target="ButtonPanel.HorizontalAlignment" Value="Center"/>
+                        <Setter Target="ButtonPanel.Margin" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <RelativePanel x:Name="ContentContainer" Grid.Column="1">
+            <Border BorderThickness="1" Height="{Binding ElementName=ArtworkImg, Path=Height}"
+                    Width="{Binding ElementName=ArtworkImg, Path=Width}" x:Name="ArtworkContainer"
+                    RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True"
+                    BorderBrush="{StaticResource ApplicationSecondaryForegroundThemeBrush}" Margin="20">
+                <Image x:Name="ArtworkImg" Width="150"
+                       Height="150" Grid.Row="0" Grid.Column="1">
+                    <Image.Source>
+                        <BitmapImage UriSource="{x:Bind Artwork, Mode=OneWay}" DecodePixelHeight="150"
+                                     DecodePixelWidth="150" DecodePixelType="Logical"/>
+                    </Image.Source>
+                </Image>
+            </Border>
+            <StackPanel Orientation="Vertical" x:Name="TitlePanel" Padding="10" Margin="20"
+                        RelativePanel.RightOf="ArtworkContainer" RelativePanel.AlignRightWithPanel="True"
+                        VerticalAlignment="Center" HorizontalAlignment="Left" Height="Auto">
+                <TextBlock Text="{x:Bind Episode.Podcast.Title, Mode=OneWay}" Margin="3" FontWeight="Bold"/>
+                <TextBlock Text="{x:Bind Episode.Title, Mode=OneWay}" Margin="3"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Published:" Margin="3"/>
+                    <TextBlock Text="{x:Bind PublishedDateString, Mode=OneWay}" FontStyle="Italic" Margin="3"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Duration:" Margin="3"/>
+                    <TextBlock Text="{x:Bind DurationString, Mode=OneWay}" Margin="3"/>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel x:Name="ButtonPanel" Orientation="Horizontal"
+                        RelativePanel.Below="TitlePanel" Margin="20"
+                        RelativePanel.RightOf="ArtworkContainer"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom">
+                <Button x:Name="PlayButton" Margin="10,0" Click="PlayButton_Click">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Play"/>
+                            <SymbolIcon Symbol="Play"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+                <Button x:Name="DownloadButton" Margin="10,0" Click="DownloadButton_Click">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Download"/>
+                            <SymbolIcon Symbol="Download"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
+            <WebView x:Name="DescriptionWebView" Margin="10" RelativePanel.Below="ArtworkContainer"
+                     RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
+                     RelativePanel.AlignBottomWithPanel="True"
+                     NavigationStarting="DescriptionWebView_NavigationStarting"/>
+        </RelativePanel>
+    </Grid>
+</Page>

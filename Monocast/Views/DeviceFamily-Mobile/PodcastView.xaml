@@ -1,0 +1,131 @@
+﻿<Page
+    x:Class="Monocast.Views.PodcastView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Monocast.Views"
+    xmlns:ctrl="using:Monocast.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+        <!--<VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource MediumWindowSnapPoint}"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ContentContainer.Margin" Value="24,0"/>
+                        <Setter Target="EpisodeListView.MaxHeight" Value="1440"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowHeight="{StaticResource MedPhoneSizeSnapPoint}"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="EpisodeListView.MaxHeight" Value="300"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowHeight="{StaticResource LargePhoneSizeSnapPoint}"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="EpisodeListView.MaxHeight" Value="400"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource MinWindowSnapPoint}"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ContentContainer.Margin" Value="12,0"/>
+                        <Setter Target="DescWebView.(RelativePanel.Below)" Value="EpisodeListView"/>
+                        <Setter Target="DescWebView.(RelativePanel.AlignLeftWith)" Value="EpisodeListView"/>
+                        <Setter Target="DescWebView.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="EpisodeListView.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="DownloadButton.(RelativePanel.RightOf)" Value=""/>
+                        <Setter Target="DownloadButton.(RelativePanel.AlignLeftWithPanel)" Value="True"/>
+                        <Setter Target="DownloadButton.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="StatusText.(RelativePanel.RightOf)" Value=""/>
+                        <Setter Target="StatusText.(RelativePanel.Above)" Value="DownloadButton"/>
+                        <Setter Target="StatusText.(RelativePanel.AlignTopWith)" Value=""/>
+                        <Setter Target="StatusText.(RelativePanel.AlignBottomWith)" Value=""/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>-->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" MinHeight="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <RelativePanel x:Name="ContentContainer" Grid.Row="1">
+            <Border BorderThickness="1" Height="{Binding ElementName=Artwork, Path=Height}"
+                Width="{Binding ElementName=Artwork, Path=Width}" x:Name="ArtworkContainer"
+                RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True"
+                BorderBrush="{StaticResource ApplicationSecondaryForegroundThemeBrush}">
+                <Image x:Name="ArtworkSource" Height="100" Width="100">
+                    <Image.Source>
+                        <BitmapImage UriSource="{x:Bind Artwork, Mode=OneWay}" DecodePixelType="Logical"
+                                     DecodePixelHeight="100" DecodePixelWidth="100"/>
+                    </Image.Source>
+                </Image>
+            </Border>
+            <StackPanel Orientation="Vertical" x:Name="TitlePanel"
+                        RelativePanel.AlignTopWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True"
+                        RelativePanel.AlignBottomWith="ArtworkContainer"
+                        RelativePanel.RightOf="ArtworkContainer">
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="TitleText"
+                           Text="{x:Bind Title, Mode=OneWay}" Margin="0,5"
+                           FontWeight="Bold"/>
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="EpisodeTitleTextControl"
+                           Text="{x:Bind EpisodeTitle, Mode=OneWay}" Margin="0,5"/>
+            </StackPanel>
+            <!--<WebView x:Name="DescWebView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                     RelativePanel.Below="TitleText" 
+                     RelativePanel.Above="DownloadButton" MinHeight="100"
+                     RelativePanel.AlignRightWithPanel="True"
+                     RelativePanel.RightOf="EpisodeListView"/>-->
+            <ListView x:Name="EpisodeListView" DisplayMemberPath="Title"
+                      IsItemClickEnabled="True" ItemClick="EpisodeListView_ItemClick"
+                      ScrollViewer.VerticalScrollBarVisibility="Visible"
+                      ScrollViewer.VerticalScrollMode="Enabled"
+                      RelativePanel.Below="ArtworkContainer"
+                      VerticalAlignment="Stretch"
+                      Padding="0,0,0,-170"
+                      RelativePanel.AlignLeftWithPanel="True"
+                      RelativePanel.AlignRightWithPanel="True">
+                <ListViewItem>Sample</ListViewItem>
+                <ListViewItem>Sample</ListViewItem>
+                <ListViewItem>Sample</ListViewItem>
+                <ListViewItem>Sample</ListViewItem>
+                <ListViewItem>Sample</ListViewItem>
+                <ListViewItem>Sample</ListViewItem>
+                <ListViewItem>Sample</ListViewItem>
+                <ListViewItem>Sample</ListViewItem>
+                <ListViewItem>Sample</ListViewItem>
+                <ListViewItem>Sample</ListViewItem>
+                <ListViewItem>Sample</ListViewItem>
+                <ListViewItem>Sample</ListViewItem>
+                <ListViewItem>Sample</ListViewItem>
+                <ListViewItem>Sample</ListViewItem>
+                <ListViewItem>Sample</ListViewItem>
+                <ListViewItem>Sample</ListViewItem>
+                <ListViewItem>Sample</ListViewItem>
+                <ListViewItem>Sample</ListViewItem>
+            </ListView>
+            <!--<Button x:Name="DownloadButton" Content="Download" Margin="0,20"
+                    HorizontalAlignment="Center" IsEnabled="False" VerticalAlignment="Bottom"
+                    Click="DownloadButton_Click" RelativePanel.AlignBottomWithPanel="True"
+                    RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignLeftWithPanel="True"/>-->
+            <!--<TextBlock x:Name="StatusText" Visibility="Collapsed" Margin="20"
+                       HorizontalAlignment="Center" Text="Testing"
+                       RelativePanel.RightOf="DownloadButton"
+                       RelativePanel.AlignTopWith="DownloadButton"
+                       RelativePanel.AlignBottomWith="DownloadButton"
+                       VerticalAlignment="Center"/>-->
+        </RelativePanel>
+    </Grid>
+</Page>

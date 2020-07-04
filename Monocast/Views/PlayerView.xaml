@@ -1,0 +1,71 @@
+﻿<Page
+    x:Class="Monocast.Views.PlayerView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Monocast.Views"
+    xmlns:controls="using:Monocast.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource MediumWindowSnapPoint}"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="NotificationGrid.Height" Value="400"/>
+                        <Setter Target="PlayPauseViewbox.MaxHeight" Value="200"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.Resources>
+            <Storyboard x:Name="RaiseNotification">
+                <FadeInThemeAnimation TargetName="NotificationGrid"/>
+            </Storyboard>
+            <Storyboard x:Name="ExitNotification">
+                <FadeOutThemeAnimation TargetName="NotificationGrid"/>
+            </Storyboard>
+        </Grid.Resources>
+        <MediaPlayerElement x:Name="MainMPE" AreTransportControlsEnabled="True" AutoPlay="True" PosterSource="{x:Bind PosterSource, Mode=OneWay}" Tapped="OverallArea_Tapped">
+            <MediaPlayerElement.TransportControls>
+                <controls:PodcastMediaTransportControls IsCompact="False"
+                                                        IsPlaybackRateButtonVisible="True"
+                                                        IsPlaybackRateEnabled="True"
+                                                        IsSkipBackwardButtonVisible="True"
+                                                        IsSkipBackwardEnabled="True"
+                                                        IsSkipForwardButtonVisible="True"
+                                                        IsSkipForwardEnabled="True"
+                                                        IsZoomButtonVisible="False"
+                                                        IsZoomEnabled="False"
+                                                        IsFullWindowEnabled="False"
+                                                        IsFullWindowButtonVisible="False">
+                </controls:PodcastMediaTransportControls>
+            </MediaPlayerElement.TransportControls>
+        </MediaPlayerElement>
+        <Grid Height="200" Width="{Binding ElementName=NotificationGrid, Path=Height}"
+              x:Name="NotificationGrid" Tapped="OverallArea_Tapped">
+            <Rectangle Width="{Binding ElementName=NotificationGrid, Path=Width}"
+                       Height="{Binding ElementName=NotificationGrid, Path=Height}"
+                       UseLayoutRounding="True">
+                <Rectangle.Fill>
+                    <AcrylicBrush Opacity="0.8" TintColor="#FF1D1D1D"/>
+                </Rectangle.Fill>
+                <Rectangle.Stroke>
+                    <SolidColorBrush Color="Black"/>
+                </Rectangle.Stroke>
+            </Rectangle>
+            <Viewbox x:Name="PlayPauseViewbox" MaxHeight="100"
+                     MaxWidth="{Binding ElementName=PlayPauseViewbox, Path=MaxHeight}">
+                <StackPanel>
+                    <SymbolIcon Symbol="{x:Bind PlayPauseSymbol, Mode=OneWay}" Foreground="White" Visibility="{x:Bind SymbolVisibility, Mode=OneWay}"/>
+                    <TextBlock Text="Buffering" Margin="10" Foreground="White" Visibility="{x:Bind BufferRingVisibility, Mode=OneWay}"/>
+                    <ProgressRing IsActive="True" Visibility="{x:Bind BufferRingVisibility, Mode=OneWay}"/>
+                </StackPanel>
+            </Viewbox>
+        </Grid>
+    </Grid>
+</Page>

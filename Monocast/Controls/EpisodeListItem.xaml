@@ -1,0 +1,57 @@
+﻿<UserControl
+    x:Class="Monocast.Controls.EpisodeListItem"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Monocast.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    mc:Ignorable="d"
+    d:DesignHeight="30"
+    d:DesignWidth="200">
+    <UserControl.ContextFlyout>
+        <MenuFlyout>
+            <MenuFlyoutItem Text="Download" Click="DownloadMenuFlyoutItem_Click"/>
+            <MenuFlyoutItem Text="Mark As Played" IsEnabled="{x:Bind IsNotCompletelyPlayed, Mode=OneWay}" Click="MarkPlayedMenuFlyoutItem_Click"/>
+            <MenuFlyoutItem Text="{x:Bind MarkArchivedText, Mode=OneWay}" Click="MarkArchivedMenuFlyoutItem_Click"/>
+            <MenuFlyoutItem Text="Pin Episode" Click="PinEpisodeMenuFlyoutItem_Click"/>
+            <MenuFlyoutItem Text="Go To Episode" Click="GoToMenuFlyoutItem_Click"/>
+        </MenuFlyout>
+    </UserControl.ContextFlyout>
+    <Grid>
+        <Grid.Resources>
+            <Storyboard x:Name="EaseIn">
+                <DoubleAnimation Storyboard.TargetName="TranslateIn" Storyboard.TargetProperty="X" Duration="0:0:0.15"
+                                 Completed="EaseIn_Completed">
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase Exponent="4" EasingMode="EaseIn"/>
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <!--<RowDefinition Height="Auto"/>-->
+        </Grid.RowDefinitions>
+        <!--<SymbolIcon Symbol="Accept" Foreground="{x:Bind DownloadedColor}" Grid.Column="0" Grid.Row="0" Margin="5" ToolTipService.ToolTip="{x:Bind DownloadedToolTip}"/>-->
+        <CheckBox Grid.Column="0" Grid.Row="0" Margin="0,0,-95,0" IsChecked="{x:Bind Selected, Mode=TwoWay}"
+                  Visibility="{x:Bind CheckboxVisibility, Mode=OneWay}">
+            <CheckBox.RenderTransform>
+                <TranslateTransform x:Name="TranslateIn"/>
+            </CheckBox.RenderTransform>
+        </CheckBox>
+        <SymbolIcon Symbol="Pin" Grid.Column="0" Grid.Row="0" Margin="0" Visibility="{x:Bind PinnedVisiblity, Mode=OneWay}"/>
+        <Ellipse Height="8" Width="8" Margin="8,0" Fill="{ThemeResource SystemAccentColor}" Grid.Column="0" Grid.Row="0" Visibility="{x:Bind UnreadVisibility, Mode=OneWay}"
+                 VerticalAlignment="Center"/>
+        <controls:RadialProgressBar Grid.Column="0" Grid.Row="0" Margin="2" Minimum="0" Maximum="100" Width="20" Height="20"
+                                    Value="{x:Bind CompletedPct, Mode=OneWay}" Visibility="{x:Bind ProgressBarVisibility, Mode=OneWay}"
+                                    VerticalAlignment="Center"/>
+        <TextBlock Text="{x:Bind TruncatedEpisodeTitle}" Margin="10,0,0,0" Grid.Row="0" Grid.Column="1" ToolTipService.ToolTip="{x:Bind Episode.Title}" VerticalAlignment="Center"
+                   Foreground="{x:Bind TextColor, Mode=OneWay}"/>
+        <!--<ProgressBar Grid.Column="2" Grid.Row="1" Value="{x:Bind CompletedPct, Mode=OneWay}" Visibility="{x:Bind ProgressBarVisibility, Mode=OneWay}"/>-->
+    </Grid>
+</UserControl>

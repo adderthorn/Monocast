@@ -1,0 +1,64 @@
+﻿<Page
+    x:Class="Monocast.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Monocast"
+    xmlns:controls="using:Monocast.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Windows10version1803="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 6)"
+    TabNavigation="Cycle"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <Storyboard x:Name="SyncRotateIcon" AutoReverse="False" RepeatBehavior="Forever">
+            <DoubleAnimation Duration="0:0:1" To="360" Storyboard.TargetName="SyncIcon"
+                            Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)"/>
+        </Storyboard>
+    </Page.Resources>
+    <NavigationView x:Name="NavView" Header="{x:Bind CurrentHeader, Mode=OneWay}" Padding="0" AlwaysShowHeader="True"
+                    Windows10version1803:BackRequested="NavView_BackRequested" Windows10version1803:IsBackEnabled="{x:Bind AppFrame.CanGoBack, Mode=OneWay}"
+                    SelectionChanged="NavView_SelectionChanged">
+        <NavigationView.MenuItems>
+            
+            <NavigationViewItem x:Name="NowPlayingItem" Content="Now Playing" Icon="Volume" IsEnabled="{x:Bind IsPlaybackAllowed, Mode=OneWay}"
+                                Tag="Monocast.Views.PlayerView"/>
+            <NavigationViewItem x:Name="CurrentItem" Content="Current Item" Icon="Microphone" IsEnabled="{x:Bind IsItemActive, Mode=OneWay}"/>
+            <NavigationViewItem x:Name="LibraryItem" Content="My Subscriptions" Icon="Library" Tag="Monocast.Views.SubscriptionView"/>
+            <NavigationViewItem x:Name="DownloadsItem" Content="Current Downloads" Icon="Download" Tag="Monocast.Views.DownloadView"/>
+            <NavigationViewItem x:Name="AddFeedItem" Content="Subscribe To New" Icon="Add" Tag="Monocast.Views.AddFeedView"/>
+        </NavigationView.MenuItems>
+        <Frame x:Name="frame" Navigated="Frame_Navigated">
+            <Frame.ContentTransitions>
+                <TransitionCollection>
+                    <NavigationThemeTransition>
+                        <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                            <EntranceNavigationTransitionInfo/>
+                        </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                    </NavigationThemeTransition>
+                </TransitionCollection>
+            </Frame.ContentTransitions>
+        </Frame>
+        <NavigationView.PaneFooter>
+            <StackPanel>
+                <NavigationViewItem x:Name="PlayPauseButton" Tapped="PlayPauseButton_Tapped" IsEnabled="{x:Bind IsPlaybackAllowed, Mode=OneWay}"
+                                    ToolTipService.ToolTip="{x:Bind PlayPauseString, Mode=OneWay}" Content="{x:Bind PlayPauseString, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="{x:Bind PlayPauseSymbol, Mode=OneWay}"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Name="SyncButton" Tapped="SyncButton_Click" x:Uid="SyncButton"
+                                    Content="{x:Bind SyncText, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon x:Name="SyncIcon" Symbol="Refresh" VerticalAlignment="Center"
+                                    RenderTransformOrigin="0.5,0.5">
+                            <SymbolIcon.RenderTransform>
+                                <CompositeTransform/>
+                            </SymbolIcon.RenderTransform>
+                        </SymbolIcon>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <Rectangle Height="1" Margin="16,0,16,6" Fill="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+            </StackPanel>
+        </NavigationView.PaneFooter>
+    </NavigationView>
+</Page>

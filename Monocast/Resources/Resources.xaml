@@ -1,0 +1,12 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <BitmapImage x:Key="PlaceholderPodcastImage" UriSource="placeholder_image.bmp" />
+    <SolidColorBrush x:Key="MonocastIconColor" Color="#9BC6FF"/>
+    <SolidColorBrush x:Key="MonocastBackgroundColor" Color="#343756"/>
+    <Storyboard x:Key="SyncRotateIcon" AutoReverse="False" RepeatBehavior="Forever">
+        <DoubleAnimation Duration="0:0:1" To="360" Storyboard.TargetName="BtnImg"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform)"/>
+    </Storyboard>
+    <x:String x:Key="ArchiveIcon">M 3.5332011 6.4291814 V 6.0600927 H 6.3013625 9.0695234 V 6.4291814 6.7982695 H 6.3013625 3.5332011 Z M 0.7650401 7.4749311 V 4.0301085 H 0.42670959 0.08837842 V 2.6460278 1.2619477 H 6.3013625 12.514346 V 2.6460278 4.0301085 H 12.145257 11.776169 V 7.4749311 10.919754 H 6.270605 0.7650401 Z M 11.099508 7.1365999 V 4.0301085 H 6.270605 1.4417016 V 7.1365999 10.243091 H 6.270605 11.099508 Z M 11.776169 2.6460278 V 1.9386093 H 6.270605 0.7650401 v 0.7074185 0.707419 h 5.5055649 5.505564 z</x:String>
+</ResourceDictionary>

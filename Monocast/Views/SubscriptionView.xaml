@@ -1,0 +1,17 @@
+﻿<Page
+    x:Class="Monocast.Views.SubscriptionView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Monocast.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <StackPanel Orientation="Vertical" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <!--<TextBlock x:Name="HeaderText" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Text="My Subscriptions" FontWeight="Bold" Height="35"/>-->
+        <GridView x:Name="PodcastsGrid" IsItemClickEnabled="True" IsTapEnabled="True"
+                  ItemClick="PodcastsGrid_ItemClick" Margin="5">
+        </GridView>
+    </StackPanel>
+</Page>
