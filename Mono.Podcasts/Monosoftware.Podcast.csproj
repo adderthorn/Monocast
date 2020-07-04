@@ -17,4 +17,8 @@
     <PackageReference Include="System.Runtime.Serialization.Xml" Version="4.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\SyndicationFeedReaderWriter\src\Microsoft.SyndicationFeed.ReaderWriter.csproj" />
+  </ItemGroup>
+
 </Project>

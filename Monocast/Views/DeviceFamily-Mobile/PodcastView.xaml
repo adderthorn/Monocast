@@ -89,7 +89,7 @@
                      RelativePanel.AlignRightWithPanel="True"
                      RelativePanel.RightOf="EpisodeListView"/>-->
             <ListView x:Name="EpisodeListView" DisplayMemberPath="Title"
-                      IsItemClickEnabled="True" ItemClick="EpisodeListView_ItemClick"
+                      SelectionChanged="EpisodeListView_SelectionChanged"
                       ScrollViewer.VerticalScrollBarVisibility="Visible"
                       ScrollViewer.VerticalScrollMode="Enabled"
                       RelativePanel.Below="ArtworkContainer"

@@ -40,14 +40,13 @@ namespace Monocast.Views
         private string _Title;
         private string _EpisodeTitle;
         private Visibility _PublishedVisibility = Visibility.Collapsed;
-        private Episode _SelectedEpisode = null;
         private List<EpisodeListItem> allEpisodeItems;
         private Visibility _EpisodesCheckBoxVisibility = Visibility.Collapsed;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public string Message { get; set; }
-        public Episode SelectedEpisode { get => _SelectedEpisode; }
+        private Episode SelectedEpisode { get; set; }
         public EpisodeListItem SelectedEpisodeListItem => EpisodeListView.SelectedItem as EpisodeListItem;
         public Visibility PublishedVisibility { get => _PublishedVisibility; }
         public Podcast Podcast
@@ -100,15 +99,15 @@ namespace Monocast.Views
             }
         }
 
-        public bool IsEpisodeSelected => _SelectedEpisode != null || selectionToggleChecked;
+        public bool IsEpisodeSelected => SelectedEpisode != null || selectionToggleChecked;
 
         public string PublishedDateString
         {
             get
             {
-                if (_SelectedEpisode?.PublishDate == null) return PUBLISHED_STRING + Utilities.UNKNOWN;
-                if (_SelectedEpisode?.PublishDate == DateTime.MinValue) return PublishedDateString + Utilities.UNKNOWN;
-                return PUBLISHED_STRING + _SelectedEpisode?.PublishDate.ToString("D");
+                if (SelectedEpisode?.PublishDate == null) return PUBLISHED_STRING + Utilities.UNKNOWN;
+                if (SelectedEpisode?.PublishDate == DateTime.MinValue) return PublishedDateString + Utilities.UNKNOWN;
+                return PUBLISHED_STRING + SelectedEpisode?.PublishDate.ToString("D");
             }
         }
 
@@ -116,11 +115,11 @@ namespace Monocast.Views
         {
             get
             {
-                if (_SelectedEpisode?.Duration != null
-                    && _SelectedEpisode?.Duration != TimeSpan.MinValue
-                    && _SelectedEpisode?.Duration != TimeSpan.MaxValue)
+                if (SelectedEpisode?.Duration != null
+                    && SelectedEpisode?.Duration != TimeSpan.MinValue
+                    && SelectedEpisode?.Duration != TimeSpan.MaxValue)
                 {
-                    return _SelectedEpisode.Duration.ToString(Utilities.DURATION_FORMAT);
+                    return SelectedEpisode.Duration.ToString(Utilities.DURATION_FORMAT);
                 }
                 return Utilities.UNKNOWN;
             }
@@ -227,11 +226,6 @@ namespace Monocast.Views
             aspectRatio = img.PixelHeight / aspectRatio;
         }
 
-        private void EpisodeListView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-
-        }
-
         private void ProgressCallback(HttpProgress progress)
         {
             if (progress.TotalBytesToReceive == null) return;
@@ -321,7 +315,7 @@ namespace Monocast.Views
 
         private void setEpisode(Episode episode, bool forceSelect = false)
         {
-            _SelectedEpisode = episode;
+            SelectedEpisode = episode;
             Visibility visibility = Visibility.Collapsed;
             if (episode != null) visibility = Visibility.Visible;
             _PublishedVisibility = visibility;
@@ -478,7 +472,6 @@ namespace Monocast.Views
                 clickedEpisodeListItem.GoToEpisodeDetails(clickedEpisodeListItem, e);
                 return;
             }
-            if (!DownloadButton.IsEnabled) DownloadButton.IsEnabled = true;
             DescWebView.NavigateToThemedString(SelectedEpisode.Description);
 
             if (App.Settings.UseEpisodeArtwork &&

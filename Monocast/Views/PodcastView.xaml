@@ -172,16 +172,14 @@
                     </CommandBar>
                 </Grid>
                 <ListView x:Name="EpisodeListView" DisplayMemberPath="Title" Grid.Row="1"
-                          IsItemClickEnabled="True" ItemClick="EpisodeListView_ItemClick"
-                          SelectionChanged="EpisodeListView_SelectionChanged"
+                          IsItemClickEnabled="True" SelectionChanged="EpisodeListView_SelectionChanged"
                           ScrollViewer.VerticalScrollBarVisibility="Visible"
                           ScrollViewer.VerticalScrollMode="Enabled" VerticalAlignment="Stretch"
                           ItemsSource="{x:Bind EpisodeListItems, Mode=OneWay}">
                     <ListViewItem>Placeholder That is longer than normal</ListViewItem>
                 </ListView>
             </Grid>
-            <Button x:Name="DownloadButton" Margin="10,0,0,20" Visibility="{x:Bind SelectedEpisode.Downloaded, Mode=OneWay}"
-                    HorizontalAlignment="Center" IsEnabled="False" VerticalAlignment="Bottom"
+            <Button x:Name="DownloadButton" Margin="10,0,0,20" HorizontalAlignment="Center" VerticalAlignment="Bottom"
                     Click="DownloadButton_Click" RelativePanel.AlignBottomWithPanel="True"
                     RelativePanel.RightOf="EpisodeListViewContainer">
                 <Button.Content>
