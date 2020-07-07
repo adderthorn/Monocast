@@ -51,7 +51,7 @@ namespace Monocast
             }
             foreach (var art in podcastList.Select(p => p.Artwork))
             {
-                string fileName = !string.IsNullOrWhiteSpace(art.LocalArtworkPath) ? new FileInfo(art.LocalArtworkPath).Name : null;
+                string fileName = !string.IsNullOrWhiteSpace(art.LocalArtworkPath) ? new AppData(art.LocalArtworkPath, FolderLocation.Local).FullPath : null;
                 if (!art.IsDownloaded)
                 {
                     await art.DownloadFileAsync();
@@ -64,7 +64,7 @@ namespace Monocast
             var podcastList = subscriptions.Podcasts.Where(p => p.Artwork.IsDownloaded);
             foreach (var podcast in podcastList)
             {
-                AppData appData = new AppData(new FileInfo(podcast.Artwork.LocalArtworkPath).Name, FolderLocation.Local);
+                AppData appData = new AppData(podcast.Artwork.LocalArtworkPath, FolderLocation.Local);
                 Stream imgStream;
                 if (!appData.CheckFileExists() && podcast.Artwork.MediaSource == null)
                 {
@@ -137,7 +137,8 @@ namespace Monocast
             Uri uri = artworkInfo.MediaSource;
             if (!string.IsNullOrWhiteSpace(artworkInfo.LocalArtworkPath))
             {
-                return new Uri(artworkInfo.LocalArtworkPath);
+                var appData = new AppData(artworkInfo.LocalArtworkPath, FolderLocation.Local);
+                return new Uri(appData.FullPath);
             }
             return uri;
         }
@@ -149,7 +150,7 @@ namespace Monocast
             FileName = FileName.ToSafeWindowsNameString() + Path.GetExtension(artworkInfo.MediaSource.GetAbsoluteFileName());
             var appData = new AppData(FileName, FolderLocation.Local);
             var filePath = await appData.SaveToFileAsync(artworkInfo.MediaBytes, CreationCollisionOption.ReplaceExisting);
-            artworkInfo.LocalArtworkPath = filePath;
+            artworkInfo.LocalArtworkPath = FileName;
         }
         #endregion
 

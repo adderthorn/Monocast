@@ -103,14 +103,14 @@ namespace Monocast.Views
                 && Subscriptions.LastModifiedDate.AddMinutes(1) < DateTime.Now)
                 {
                     ActiveEpisode.PlaybackPosition = sessionViewModel.Position;
-                    if (Subscriptions != null) await Utilities.SaveSubscriptions(Subscriptions);
+                    if (Subscriptions != null) await Utilities.SaveSubscriptionsAsync(Subscriptions);
                 }
                 ShowPlaybackNotification();
             }
             else if (e.PropertyName == "MediaEnded")
             {
                 ActiveEpisode.PlaybackPosition = ActiveEpisode.Duration;
-                await Utilities.SaveSubscriptions(Subscriptions);
+                await Utilities.SaveSubscriptionsAsync(Subscriptions);
                 Frame.Navigate(typeof(PodcastView), ActiveEpisode.Podcast);
                 RaisePropertyChanged("ActivePage");
             }
@@ -127,12 +127,12 @@ namespace Monocast.Views
         {
             if (ActiveEpisode == null) return;
             if (PlayerViewModel.PlaybackSession.PlaybackState == MediaPlaybackState.None
-                || App.ActiveEpisode != ActiveEpisode)
+                || App.NowPlayingEpisode != ActiveEpisode)
             {
                 if (ActiveEpisode.IsPlayed)
                     ActiveEpisode.IsPlayed = false;
                 PlayerViewModel.SetNewEpisodePlayerInfo(await EpisodePlayerInfo.CreateFromEpisodeAsync(ActiveEpisode));
-                App.ActiveEpisode = ActiveEpisode;
+                App.NowPlayingEpisode = ActiveEpisode;
             }
             else
             {
@@ -155,7 +155,7 @@ namespace Monocast.Views
             }
             else
             {
-                ActiveEpisode = App.ActiveEpisode;
+                ActiveEpisode = App.NowPlayingEpisode;
             }
             base.OnNavigatedTo(e);
         }

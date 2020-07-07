@@ -100,7 +100,7 @@ namespace Monocast.Views
         private async void FinishAllDownloads()
         {
             if (App.CurrentDownloads.Count > 0) return;
-            await Utilities.SaveSubscriptions(Subscriptions);
+            await Utilities.SaveSubscriptionsAsync(Subscriptions);
             //Frame.Navigate(typeof(SubscriptionView));
             Frame.GoBack();
             RaisePropertyChanged("ActivePage");

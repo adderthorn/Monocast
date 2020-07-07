@@ -17,7 +17,7 @@ namespace Monocast
         public const string SUBSCRIPTION_FILE = "MySubscriptions.xml";
         public const string DURATION_FORMAT = @"hh\:mm\:ss";
 
-        public static async Task SaveSubscriptions(Subscriptions subscriptions)
+        public static async Task SaveSubscriptionsAsync(Subscriptions subscriptions)
         {
             subscriptions.GenerateEpisodeGuids(false);
             subscriptions.LastModifiedDate = DateTime.Now;
@@ -31,7 +31,7 @@ namespace Monocast
             var subscriptions = await appData.DeserializeFromFileAsync<Subscriptions>();
             if (subscriptions.Podcasts.FirstOrDefault()?.Episodes.FirstOrDefault().Podcast == null)
             {
-                await Utilities.SaveSubscriptions(subscriptions);
+                await Utilities.SaveSubscriptionsAsync(subscriptions);
                 subscriptions = await appData.DeserializeFromFileAsync<Subscriptions>();
             }
             return subscriptions;

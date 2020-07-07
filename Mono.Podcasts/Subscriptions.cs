@@ -41,6 +41,7 @@ namespace Monosoftware.Podcast
 
         #region Private Variables
         private ObservableCollection<Podcast> _Podcasts = new ObservableCollection<Podcast>();
+        private Episode _ActiveEpisode;
         #endregion Private Variables
 
         #region Public Properties
@@ -66,6 +67,19 @@ namespace Monosoftware.Podcast
             {
                 _Podcasts = value;
                 _Podcasts.CollectionChanged += podcasts_CollectionChanged;
+            }
+        }
+
+        public Episode ActiveEpisode
+        {
+            get => _ActiveEpisode;
+            set
+            {
+                if (value != _ActiveEpisode)
+                {
+                    _ActiveEpisode = value;
+                    raiseNotifyPropertyChanged(nameof(ActiveEpisode));
+                }    
             }
         }
         #endregion
