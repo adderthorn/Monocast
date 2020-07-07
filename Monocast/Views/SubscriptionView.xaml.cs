@@ -71,7 +71,7 @@ namespace Monocast.Views
             {
                 PodcastsGrid.Items.Remove(clickedControl);
                 Subscriptions.RemovePodcast(clickedControl.Podcast);
-                await Utilities.SaveSubscriptions(Subscriptions);
+                await Utilities.SaveSubscriptionsAsync(Subscriptions);
             }
         }
 

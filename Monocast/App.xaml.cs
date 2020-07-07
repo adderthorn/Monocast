@@ -49,7 +49,7 @@ namespace Monocast
                 if (!isSaving)
                 {
                     isSaving = true;
-                    await Utilities.SaveSubscriptions(Subscriptions);
+                    await Utilities.SaveSubscriptionsAsync(Subscriptions);
                     isSaving = false;
                 }
             };
@@ -88,8 +88,9 @@ namespace Monocast
         /// <summary>
         /// Active Episode used by the player control.
         /// </summary>
-        public static Episode ActiveEpisode { get; set; }
-        public static Episode LastViewedEpisode { get; set; }
+        public static Episode NowPlayingEpisode { get; set; }
+
+        public static MainPage MainPageInstance { get; set; }
 
         /// <summary>
         /// The page the application was on before a sync or download event so we can
@@ -116,7 +117,11 @@ namespace Monocast
                 // TODO: Handle URI activation
                 // The received URI is eventArgs.Uri.AbsoluteUri
                 
-                string newFeed = eventArgs.Uri.AbsoluteUri.ToString().Replace("pcast", "http").Replace("PCAST", "HTTP");
+                string newFeed = eventArgs.Uri.AbsoluteUri.ToString();
+                if (newFeed.StartsWith("pcast", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    newFeed = "http" + newFeed.Remove(0, "pcast".Length);
+                }
                 rootFrame.Navigate(typeof(MainPage), new Uri(newFeed));
                 Window.Current.Activate();
             }
@@ -193,7 +198,7 @@ namespace Monocast
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
-            if (!isSaving) await Utilities.SaveSubscriptions(Subscriptions);
+            if (!isSaving) await Utilities.SaveSubscriptionsAsync(Subscriptions);
             deferral.Complete();
         }
     }

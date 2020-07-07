@@ -96,7 +96,7 @@ namespace Monocast.Views
                         if (!podcast.Artwork?.IsDownloaded == true) await podcast.Artwork.DownloadFileAsync();
                         podcast.Artwork.SaveToFile();
                     }
-                    await Utilities.SaveSubscriptions(Subscriptions);
+                    await Utilities.SaveSubscriptionsAsync(Subscriptions);
                     this.Frame.Navigate(_PageAfterAdding, podcast);
                     RaisePropertyChanged("ActivePage");
                     return;
@@ -167,6 +167,20 @@ namespace Monocast.Views
                 Frame.Navigate(typeof(SubscriptionView));
             }
             buttonOpml.IsEnabled = true;
+        }
+
+        private async void PasteButton_Click(object sender, RoutedEventArgs e)
+        {
+            DataPackageView dataPackageView = Clipboard.GetContent();
+            if (dataPackageView.Contains(StandardDataFormats.Text))
+            {
+                string text = await dataPackageView.GetTextAsync();
+                if (!string.IsNullOrWhiteSpace(text))
+                {
+                    TextBoxFeed.Text = text;
+                    TextBoxFeed.Focus(FocusState.Keyboard);
+                }
+            }
         }
 
         //private async void buttonOpmlUri_Click(object sender, RoutedEventArgs e)

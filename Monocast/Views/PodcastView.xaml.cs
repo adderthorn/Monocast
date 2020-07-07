@@ -160,7 +160,7 @@ namespace Monocast.Views
             if (e.Parameter is Podcast)
             {
                 Podcast = (Podcast)e.Parameter;
-                if (App.LastViewedEpisode == null)
+                if (!App.MainPageInstance.IsCurrentEpisodeAvailable || App.Subscriptions.ActiveEpisode.Podcast != Podcast)
                     setEpisode(Podcast.Episodes.FirstOrDefault(), true);
             }
             else if (e.Parameter is Episode)
@@ -307,7 +307,7 @@ namespace Monocast.Views
         private void DetailsButton_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedEpisode == null) return;
-            App.ActiveEpisode = SelectedEpisode;
+            App.NowPlayingEpisode = SelectedEpisode;
             Frame.Navigate(typeof(EpisodeView), SelectedEpisode,
                 new Windows.UI.Xaml.Media.Animation.DrillInNavigationTransitionInfo());
             RaisePropertyChanged("ActivePage");
@@ -329,7 +329,8 @@ namespace Monocast.Views
             {
                 EpisodeListView.SelectedItem = EpisodeListItems.FirstOrDefault(ep => ep.Episode == episode);
             }
-            App.LastViewedEpisode = episode;
+            App.Subscriptions.ActiveEpisode = episode;
+            App.MainPageInstance.IsCurrentEpisodeAvailable = true;
         }
 
         private void SetCheckedState(EpisodeListItem toggledItem)

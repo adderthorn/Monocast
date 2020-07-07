@@ -34,6 +34,7 @@ namespace Monocast
         private string _CurrentHeader;
         private Symbol _PlayPauseSymbol = Symbol.Play;
         private string _SyncText = "Sync Subscriptions";
+        private bool _IsCurrentEpisodeAvailable = false;
         #endregion
 
         public static MainPage Current = null;
@@ -64,8 +65,6 @@ namespace Monocast
                 }
             }
         }
-
-        public bool IsItemActive => App.LastViewedEpisode != null;
         public bool IsPlaybackAllowed => PlaybackService.Instance.MediaPlayer.Source != null;
         public string PlayPauseString => _PlayPauseSymbol == Symbol.Play ? "Play" : "Pause";
 
@@ -78,6 +77,19 @@ namespace Monocast
                 {
                     _SyncText = value;
                     RaisePropertyChanged(nameof(SyncButton));
+                }
+            }
+        }
+
+        public bool IsCurrentEpisodeAvailable
+        {
+            get => _IsCurrentEpisodeAvailable;
+            set
+            {
+                if (value != _IsCurrentEpisodeAvailable)
+                {
+                    _IsCurrentEpisodeAvailable = value;
+                    RaisePropertyChanged(nameof(IsCurrentEpisodeAvailable));
                 }
             }
         }
@@ -95,6 +107,7 @@ namespace Monocast
                 titleBar.IsVisibleChanged += TitleBar_IsVisibleChanged;
                 FinishLoading();
             };
+            if (App.MainPageInstance != this) App.MainPageInstance = this;
             App.CurrentDownloads = new List<DownloadControl>();
 
             PlaybackService.Instance.MediaPlayer.PlaybackSession.PlaybackStateChanged += async (sender, e) =>
@@ -267,8 +280,8 @@ namespace Monocast
                 if (selected == null) return;
                 sender.Header = selected.Content.ToString();
                 object arg = null;
-                if (selected == CurrentItem && App.LastViewedEpisode != null)
-                    arg = App.LastViewedEpisode;
+                if (selected == CurrentItem && App.MainPageInstance.IsCurrentEpisodeAvailable)
+                    arg = Subscriptions.ActiveEpisode;
                 AppFrame.Navigate(Type.GetType(selected.Tag.ToString()), arg);
             }
         }
@@ -281,9 +294,7 @@ namespace Monocast
                 SyncText = "Syncing...";
                 await Subscriptions.RefreshFeedsAsync(Settings.UseEpisodeArtwork, Settings.EpisodesToKeep, AppendToEnd:false);
                 SyncText = "Saving...";
-                AppData appData = new AppData(Utilities.SUBSCRIPTION_FILE, FolderLocation.Roaming);
-                await appData.SerializeToFileAsync<Subscriptions>(Subscriptions,
-                    Windows.Storage.CreationCollisionOption.ReplaceExisting);
+                await Utilities.SaveSubscriptionsAsync(Subscriptions);
                 SyncText = "Done!";
                 SyncRotateIcon.Stop();
                 await Task.Delay(5000);

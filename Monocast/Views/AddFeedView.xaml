@@ -25,7 +25,13 @@
                    HorizontalAlignment="Right" VerticalAlignment="Center"/>
         <TextBox x:Name="TextBoxFeed" Grid.Row="0" Grid.Column="1"
                  HorizontalAlignment="Stretch" Text="{x:Bind FeedUri, Mode=TwoWay}"
-                 VerticalAlignment="Center" Margin="10" Grid.ColumnSpan="2"/>
+                 VerticalAlignment="Center" Margin="10"/>
+        <Button x:Name="PasteButton" Grid.Column="2" HorizontalAlignment="Center"
+                Margin="0,0,10,0" Click="PasteButton_Click">
+            <Button.Content>
+                <SymbolIcon Symbol="Paste"/>
+            </Button.Content>
+        </Button>
         <Button x:Name="SubscribeButton" Grid.Row="1" Grid.Column="1"
                 Content="Subscribe" Width="100" Margin="10,0,0,10" Click="SubscribeButton_Click" VerticalAlignment="Bottom"/>
         <TextBlock Grid.Row="3" Grid.Column="1" x:Name="StatusTextTextBlock"
