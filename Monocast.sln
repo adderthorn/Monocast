@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29411.108
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monocast", "Monocast\Monocast.csproj", "{AD63F9DF-7463-4D64-8DA7-6E4B95E50EEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonocastClassic", "MonocastClassic\MonocastClassic.csproj", "{63FEF768-0B75-41F6-85ED-B0E64D63FC89}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monosoftware.Podcast", "Mono.Podcasts\Monosoftware.Podcast.csproj", "{5784D209-FBD2-4888-84F0-20F61F7A4C36}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.SyndicationFeed.ReaderWriter", "..\SyndicationFeedReaderWriter\src\Microsoft.SyndicationFeed.ReaderWriter.csproj", "{ACBA01F5-0805-480E-B3EA-8C643D732C7B}"

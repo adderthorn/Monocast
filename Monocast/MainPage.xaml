@@ -17,12 +17,13 @@
     </Page.Resources>
     <NavigationView x:Name="NavView" Header="{x:Bind CurrentHeader, Mode=OneWay}" Padding="0" AlwaysShowHeader="True"
                     Windows10version1803:BackRequested="NavView_BackRequested" Windows10version1803:IsBackEnabled="{x:Bind AppFrame.CanGoBack, Mode=OneWay}"
-                    SelectionChanged="NavView_SelectionChanged">
+                    SelectionChanged="NavView_SelectionChanged" IsSettingsVisible="True">
         <NavigationView.MenuItems>
             
             <NavigationViewItem x:Name="NowPlayingItem" Content="Now Playing" Icon="Volume" IsEnabled="{x:Bind IsPlaybackAllowed, Mode=OneWay}"
                                 Tag="Monocast.Views.PlayerView"/>
-            <NavigationViewItem x:Name="CurrentItem" Content="Current Episode" Icon="Microphone" Tag="Monocast.Views.PodcastView" IsEnabled="{x:Bind IsCurrentEpisodeAvailable, Mode=OneWay}"/>
+            <NavigationViewItem x:Name="CurrentItem" Content="Current Episode" Icon="Microphone" Tag="Monocast.Views.PodcastView" IsEnabled="{x:Bind IsCurrentEpisodeAvailable, Mode=OneWay}"
+                                IsSelected="{x:Bind IsCurrentSelected, Mode=TwoWay}"/>
             <NavigationViewItem x:Name="LibraryItem" Content="My Subscriptions" Icon="Library" Tag="Monocast.Views.SubscriptionView"/>
             <NavigationViewItem x:Name="DownloadsItem" Content="Current Downloads" Icon="Download" Tag="Monocast.Views.DownloadView"/>
             <NavigationViewItem x:Name="AddFeedItem" Content="Subscribe To New" Icon="Add" Tag="Monocast.Views.AddFeedView"/>

@@ -6,12 +6,26 @@ using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 using Monosoftware.Podcast;
 using System.Net.NetworkInformation;
+using Monocast.Services;
 
 namespace Monocast
 {
     public class EpisodePlayerInfo
     {
-        public Episode Episode { get; set; }
+        private Episode _Episode;
+
+        public Episode Episode
+        {
+            get => _Episode;
+            set
+            {
+                _Episode = value;
+                if (value != PlaybackService.Instance.NowPlayingEpisode)
+                {
+                    PlaybackService.Instance.NowPlayingEpisode = value;
+                }
+            }
+        }
 
         public IMediaPlaybackSource PlaybackSource { get; set; }
         public BitmapImage ArtworkPoster { get; private set; }

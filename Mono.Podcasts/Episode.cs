@@ -238,7 +238,9 @@ namespace Monosoftware.Podcast
                 if (value != _PlaybackPosition)
                 {
                     _PlaybackPosition = value;
-                    raiseNotifyPropertyChanged(nameof(PlaybackPosition), nameof(PlaybackPositionLong));
+                    raiseNotifyPropertyChanged(nameof(PlaybackPosition),
+                        nameof(PlaybackPositionLong),
+                        nameof(IsPlayed));
                 }
             }
         }
@@ -344,8 +346,9 @@ namespace Monosoftware.Podcast
             get
             {
                 // Needed to check to episodes where we do not have a valid duration.
-                if (Duration == PlaybackPosition && PlaybackPosition > TimeSpan.MinValue) return true;
-                return false;
+                //if (Duration == PlaybackPosition && PlaybackPosition > TimeSpan.MinValue) return true;
+                //return false;
+                return (PlaybackPosition > TimeSpan.Zero && Duration > TimeSpan.MinValue);
             }
             set
             {
@@ -359,7 +362,7 @@ namespace Monosoftware.Podcast
                     {
                         if (PlaybackPosition == Duration)
                         {
-                            PlaybackPosition = TimeSpan.MinValue;
+                            PlaybackPosition = TimeSpan.Zero;
                         }
                     }
                     raiseNotifyPropertyChanged(nameof(IsPlayed));

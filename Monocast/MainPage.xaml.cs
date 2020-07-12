@@ -34,10 +34,11 @@ namespace Monocast
         private string _CurrentHeader;
         private Symbol _PlayPauseSymbol = Symbol.Play;
         private string _SyncText = "Sync Subscriptions";
-        private bool _IsCurrentEpisodeAvailable = false;
+        private bool _IsCurrentEpisodeAvailable;
+        private bool _IsCurrentSelected;
         #endregion
 
-        public static MainPage Current = null;
+        public static MainPage Current { get; private set; }
         public Settings Settings => App.Settings;
         public Frame AppFrame => this.frame;
         public Subscriptions Subscriptions => App.Subscriptions;
@@ -94,6 +95,19 @@ namespace Monocast
             }
         }
 
+        public bool IsCurrentSelected
+        {
+            get => _IsCurrentSelected;
+            private set
+            {
+                if (value != _IsCurrentSelected)
+                {
+                    _IsCurrentSelected = value;
+                    RaisePropertyChanged(nameof(IsCurrentSelected));
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public MainPage()
@@ -102,12 +116,8 @@ namespace Monocast
             this.Loaded += (sender, args) =>
             {
                 Current = this;
-                //CheckTogglePaneButtonSizeChanged();
-                var titleBar = CoreApplication.GetCurrentView().TitleBar;
-                titleBar.IsVisibleChanged += TitleBar_IsVisibleChanged;
                 FinishLoading();
             };
-            if (App.MainPageInstance != this) App.MainPageInstance = this;
             App.CurrentDownloads = new List<DownloadControl>();
 
             PlaybackService.Instance.MediaPlayer.PlaybackSession.PlaybackStateChanged += async (sender, e) =>
@@ -230,49 +240,14 @@ namespace Monocast
                 AppFrame.GoBack();
             }
         }
-
-        private void OnBack(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs e)
-        {
-            bool handled = false;
-            BackRequested(ref handled);
-            e.Handled = handled;
-        }
         #endregion
-
-        private void TitleBar_IsVisibleChanged(CoreApplicationViewTitleBar sender, object args)
-        {
-            // TODO Add padding stuff
-        }
-
-        //private void OnNavigationViewItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs e)
-        //{
-        //    if (e.IsSettingsInvoked)
-        //    {
-        //        AppFrame.Navigate(typeof(SettingsView));
-        //        CurrentHeader = "Settings";
-        //    }
-        //    else
-        //    {
-        //        NavigationViewItem invoked = null;
-        //        try
-        //        {
-        //            invoked = sender.MenuItems.OfType<MonoNavItem>().First(x => x.Content == e.InvokedItem);
-        //            AppFrame.Navigate(invoked.DestPageType, invoked.Arguments);
-        //            CurrentHeader = invoked.Header;
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Console.WriteLine(invoked?.Name);
-        //            throw ex;
-        //        }
-        //    }
-        //}
 
         private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs e)
         {
             if (e.IsSettingsSelected)
             {
                 AppFrame.Navigate(typeof(SettingsView));
+
             }
             else
             {
@@ -280,7 +255,7 @@ namespace Monocast
                 if (selected == null) return;
                 sender.Header = selected.Content.ToString();
                 object arg = null;
-                if (selected == CurrentItem && App.MainPageInstance.IsCurrentEpisodeAvailable)
+                if (selected == CurrentItem && MainPage.Current.IsCurrentEpisodeAvailable)
                     arg = Subscriptions.ActiveEpisode;
                 AppFrame.Navigate(Type.GetType(selected.Tag.ToString()), arg);
             }
@@ -330,6 +305,10 @@ namespace Monocast
         private void Frame_Navigated(object sender, NavigationEventArgs e)
         {
             var t = e.SourcePageType;
+            if (t == typeof(SettingsView))
+            {
+                return;
+            }
             foreach (NavigationViewItem item in NavView.MenuItems)
             {
                 if (item.Tag == null) continue;

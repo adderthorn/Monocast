@@ -20,6 +20,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using System.Collections.ObjectModel;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.System;
+using Monocast.Services;
 
 namespace Monocast.Views
 {
@@ -160,14 +161,19 @@ namespace Monocast.Views
             if (e.Parameter is Podcast)
             {
                 Podcast = (Podcast)e.Parameter;
-                if (!App.MainPageInstance.IsCurrentEpisodeAvailable || App.Subscriptions.ActiveEpisode.Podcast != Podcast)
-                    setEpisode(Podcast.Episodes.FirstOrDefault(), true);
+                if (!MainPage.Current.IsCurrentEpisodeAvailable || App.Subscriptions.ActiveEpisode.Podcast != Podcast)
+                    setEpisode(Podcast.Episodes.FirstOrDefault(), forceSelect: true);
             }
             else if (e.Parameter is Episode)
             {
                 Episode ep = (Episode)e.Parameter;
                 Podcast = ep.Podcast;
                 setEpisode(ep, true);
+            }
+            else if (MainPage.Current.IsCurrentEpisodeAvailable && MainPage.Current.IsCurrentSelected)
+            {
+                Podcast = App.Subscriptions.ActiveEpisode.Podcast;
+                setEpisode(App.Subscriptions.ActiveEpisode, true);
             }
             base.OnNavigatedTo(e);
         }
@@ -307,7 +313,7 @@ namespace Monocast.Views
         private void DetailsButton_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedEpisode == null) return;
-            App.NowPlayingEpisode = SelectedEpisode;
+            PlaybackService.Instance.NowPlayingEpisode = SelectedEpisode;
             Frame.Navigate(typeof(EpisodeView), SelectedEpisode,
                 new Windows.UI.Xaml.Media.Animation.DrillInNavigationTransitionInfo());
             RaisePropertyChanged("ActivePage");
@@ -330,7 +336,7 @@ namespace Monocast.Views
                 EpisodeListView.SelectedItem = EpisodeListItems.FirstOrDefault(ep => ep.Episode == episode);
             }
             App.Subscriptions.ActiveEpisode = episode;
-            App.MainPageInstance.IsCurrentEpisodeAvailable = true;
+            MainPage.Current.IsCurrentEpisodeAvailable = true;
         }
 
         private void SetCheckedState(EpisodeListItem toggledItem)
@@ -397,6 +403,8 @@ namespace Monocast.Views
                 {
                     MarkEpisodeAsPlayed(item, e);
                 }
+                EpisodesAllCheckBox.IsChecked = false;
+                SelectionToggleButton.IsChecked = false;
             }
             else
             {
@@ -412,6 +420,8 @@ namespace Monocast.Views
                 {
                     ToggleMarkEpisodeArchived(item, e);
                 }
+                EpisodesAllCheckBox.IsChecked = false;
+                SelectionToggleButton.IsChecked = false;
             }
             else
             {
@@ -427,6 +437,8 @@ namespace Monocast.Views
                 {
                     PinEpisode(item, e);
                 }
+                EpisodesAllCheckBox.IsChecked = false;
+                SelectionToggleButton.IsChecked = false;
             }
             else
             {

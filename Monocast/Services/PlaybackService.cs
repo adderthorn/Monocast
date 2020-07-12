@@ -1,5 +1,7 @@
-﻿using Windows.Media.Playback;
-using Windows.Media.Core;
+﻿using System;
+using Windows.Media.Playback;
+using Monosoftware.Podcast;
+using Windows.UI.Xaml;
 
 namespace Monocast.Services
 {
@@ -9,7 +11,10 @@ namespace Monocast.Services
     /// </summary>
     public class PlaybackService
     {
+        private const float POSITION_UPDATE_TIMEOUT = 10f;
+
         private static PlaybackService _Instance;
+        private DispatcherTimer PositionUpdateTimer;
         
         public static PlaybackService Instance
         {
@@ -29,15 +34,35 @@ namespace Monocast.Services
         public MediaPlayer MediaPlayer { get; private set; }
 
         /// <summary>
-        /// Source for the media player element to playback from.
+        /// Active Episode used by the player control.
         /// </summary>
-        public EpisodePlayerInfo EpisodePlayerInfo { get; set; }
+        public Episode NowPlayingEpisode { get; set; }
 
         public PlaybackService()
         {
             // Create the player instance
             MediaPlayer = new MediaPlayer();
             MediaPlayer.AutoPlay = true;
+            MediaPlayer.PlaybackSession.PlaybackStateChanged += async (s, e) =>
+            {
+                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    if (MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing)
+                        PositionUpdateTimer.Start();
+                    else if (PositionUpdateTimer.IsEnabled)
+                        PositionUpdateTimer.Stop();
+                });
+            };
+
+            PositionUpdateTimer = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromSeconds(POSITION_UPDATE_TIMEOUT)
+            };
+            PositionUpdateTimer.Tick += (s, e) =>
+            {
+                if (NowPlayingEpisode != null)
+                    NowPlayingEpisode.PlaybackPosition = MediaPlayer.PlaybackSession.Position;
+            };
         }
     }
 }

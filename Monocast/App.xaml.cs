@@ -86,13 +86,6 @@ namespace Monocast
         public static List<DownloadControl> CurrentDownloads { get; set; }
 
         /// <summary>
-        /// Active Episode used by the player control.
-        /// </summary>
-        public static Episode NowPlayingEpisode { get; set; }
-
-        public static MainPage MainPageInstance { get; set; }
-
-        /// <summary>
         /// The page the application was on before a sync or download event so we can
         /// navigate back to it when we are finished.
         /// </summary>

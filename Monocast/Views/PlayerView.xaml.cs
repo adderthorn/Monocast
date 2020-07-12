@@ -127,12 +127,12 @@ namespace Monocast.Views
         {
             if (ActiveEpisode == null) return;
             if (PlayerViewModel.PlaybackSession.PlaybackState == MediaPlaybackState.None
-                || App.NowPlayingEpisode != ActiveEpisode)
+                || PlaybackService.Instance.NowPlayingEpisode != ActiveEpisode)
             {
                 if (ActiveEpisode.IsPlayed)
                     ActiveEpisode.IsPlayed = false;
                 PlayerViewModel.SetNewEpisodePlayerInfo(await EpisodePlayerInfo.CreateFromEpisodeAsync(ActiveEpisode));
-                App.NowPlayingEpisode = ActiveEpisode;
+                PlaybackService.Instance.NowPlayingEpisode = ActiveEpisode;
             }
             else
             {
@@ -155,7 +155,7 @@ namespace Monocast.Views
             }
             else
             {
-                ActiveEpisode = App.NowPlayingEpisode;
+                ActiveEpisode = PlaybackService.Instance.NowPlayingEpisode;
             }
             base.OnNavigatedTo(e);
         }

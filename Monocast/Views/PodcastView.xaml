@@ -159,15 +159,18 @@
                     <CommandBar x:Name="ActionsCommandBar" Grid.Column="1" Grid.Row="1" OverflowButtonVisibility="Collapsed" FlowDirection="RightToLeft" HorizontalAlignment="Right">
                         <AppBarToggleButton x:Name="SelectionToggleButton" Icon="Bullets" ToolTipService.ToolTip="Enter selection mode"
                                             Checked="SelectionToggleButton_Toggle" Unchecked="SelectionToggleButton_Toggle"/>
-                        <AppBarButton Icon="Accept" Visibility="{x:Bind IsEpisodeSelected, Mode=OneWay}" Click="MarkEpisodePlayed_Click"/>
-                        <AppBarButton Visibility="{x:Bind IsEpisodeSelected, Mode=OneWay}" Click="MarkEpisodeArchived_Click">
+                        <AppBarButton Icon="Accept" Visibility="{x:Bind IsEpisodeSelected, Mode=OneWay}" Click="MarkEpisodePlayed_Click"
+                                      ToolTipService.ToolTip="Mark Episode as Played"/>
+                        <AppBarButton Visibility="{x:Bind IsEpisodeSelected, Mode=OneWay}" Click="MarkEpisodeArchived_Click"
+                                      ToolTipService.ToolTip="Archive Episode">
                             <AppBarButton.Content>
                                 <Viewbox Stretch="Uniform">
                                     <PathIcon Data="{StaticResource ArchiveIcon}"/>
                                 </Viewbox>
                             </AppBarButton.Content>
                         </AppBarButton>
-                        <AppBarButton Icon="Pin" Visibility="{x:Bind IsEpisodeSelected, Mode=OneWay}" Click="PinEpisode_Click"/>
+                        <AppBarButton Icon="Pin" Visibility="{x:Bind IsEpisodeSelected, Mode=OneWay}" Click="PinEpisode_Click"
+                                      ToolTipService.ToolTip="Pin Episode"/>
                         <!--<AppBarButton Icon="Download" Visibility="{x:Bind IsEpisodeSelected, Mode=OneWay}" Click="DownloadButton_Click"/>-->
                     </CommandBar>
                 </Grid>
@@ -189,36 +192,14 @@
                     </StackPanel>
                 </Button.Content>
             </Button>
-            <Button x:Name="SaveButton" Margin="10,0,0,20" Visibility="{Binding ElementName=DownloadButton,
-                Mode=OneWay, Converter={StaticResource InverseConverter}}"
-                    RelativePanel.AlignBottomWith="DownloadButton" RelativePanel.RightOf="DownloadButton"
-                    IsEnabled="{Binding ElementName=DownloadButton, Path=IsEnabled}">
-                <Button.Content>
-                    <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="Save" Margin="0,0,5,0"/>
-                        <TextBlock Text="Save As..."/>
-                    </StackPanel>
-                </Button.Content>
-            </Button>
             <Button x:Name="EpisodeButton" Margin="10,0,0,20"
                     HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="PlayButton_Click"
-                    RelativePanel.AlignBottomWith="DownloadButton" RelativePanel.RightOf="SaveButton"
+                    RelativePanel.AlignBottomWith="DownloadButton" RelativePanel.RightOf="DownloadButton"
                     IsEnabled="{Binding ElementName=DownloadButton, Path=IsEnabled}">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="Play"/>
                         <TextBlock Text="Play"/>
-                    </StackPanel>
-                </Button.Content>
-            </Button>
-            <Button x:Name="DetailsButton" Margin="10,0,0,20"
-                    HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="DetailsButton_Click"
-                    RelativePanel.AlignBottomWith="DownloadButton" RelativePanel.RightOf="EpisodeButton"
-                    IsEnabled="{Binding ElementName=DownloadButton, Path=IsEnabled}">
-                <Button.Content>
-                    <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="PreviewLink" Margin="0,0,5,0"/>
-                        <TextBlock Text="Details"/>
                     </StackPanel>
                 </Button.Content>
             </Button>
