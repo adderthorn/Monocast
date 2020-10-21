@@ -7,6 +7,8 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Monosoftware.Podcast;
 using Monocast.Controls;
+using System.IO;
+using Windows.Storage;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -28,7 +30,6 @@ namespace Monocast.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            //var taskList = new List<Task>();
             foreach (Podcast podcast in Subscriptions.Podcasts)
             {
                 PodcastControl podcastCtrl = new PodcastControl(podcast);
@@ -36,11 +37,6 @@ namespace Monocast.Views
                 PodcastsGrid.Items.Add(podcastCtrl);
                 //taskList.Add(podcastCtrl.SetArtworkAsync());
             }
-            //Task.WhenAll(taskList).ContinueWith((a) =>
-            //{
-            //    if (a.IsCompleted) UpdateLayout();
-            //});
-            //Task.WaitAll(taskList.ToArray());
             base.OnNavigatedTo(e);
         }
 
@@ -61,7 +57,6 @@ namespace Monocast.Views
             {
                 this.Frame.Navigate(typeof(PodcastView), clickedPodcast.Podcast,
                     new Windows.UI.Xaml.Media.Animation.DrillInNavigationTransitionInfo());
-                RaisePropertyChanged("ActivePage");
             }
         }
 
@@ -69,8 +64,14 @@ namespace Monocast.Views
         {
             if (sender is PodcastControl clickedControl)
             {
+                Podcast podcast = clickedControl.Podcast;
                 PodcastsGrid.Items.Remove(clickedControl);
-                Subscriptions.RemovePodcast(clickedControl.Podcast);
+                if (podcast.Artwork.IsDownloaded)
+                {
+                    var appData = new AppData(podcast.Artwork.LocalArtworkPath, FolderLocation.Local);
+                    await appData.DeleteStorageFileAsync();
+                }
+                Subscriptions.RemovePodcast(podcast);
                 await Utilities.SaveSubscriptionsAsync(Subscriptions);
             }
         }

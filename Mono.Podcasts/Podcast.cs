@@ -620,7 +620,9 @@ namespace Monosoftware.Podcast
                             case RssElementNamesExt.Artwork:
                             case RssElementNames.Image:
                                 Uri artworkUri = CastHelpers.CheckForUri(await feedReader.ReadContent());
-                                if (artworkUri != null && await CastHelpers.CheckUriValidAsync(artworkUri))
+                                if (artworkUri == null) continue;
+                                var artworkUriStatus = await CastHelpers.CheckUriValidAsync(artworkUri);
+                                if (artworkUriStatus.UriStatus == UriStatus.Valid)
                                 {
                                     foundHighResImage = true;
                                     podcast.Artwork = new ArtworkInfo(artworkUri);

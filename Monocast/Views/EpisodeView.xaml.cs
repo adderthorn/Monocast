@@ -118,7 +118,6 @@ namespace Monocast.Views
             var controlList = new List<DownloadControl>() { control };
             this.Frame.Navigate(typeof(DownloadView), controlList,
                 new Windows.UI.Xaml.Media.Animation.DrillInNavigationTransitionInfo());
-            NotifyPropertyChanged("ActivePage");
         }
 
         private void PlayButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -126,7 +125,6 @@ namespace Monocast.Views
             if (Episode == null) return;
             this.Frame.Navigate(typeof(PlayerView), Episode,
                 new Windows.UI.Xaml.Media.Animation.DrillInNavigationTransitionInfo());
-            NotifyPropertyChanged("ActivePage");
         }
 
         private async void DescriptionWebView_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)

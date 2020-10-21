@@ -4,9 +4,14 @@
     <TargetFramework>netstandard1.3</TargetFramework>
     <AssemblyName>Monosoftware.Podcast</AssemblyName>
     <RootNamespace>Monosoftware.Podcast</RootNamespace>
+    <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 

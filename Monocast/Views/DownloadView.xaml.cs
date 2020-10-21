@@ -103,7 +103,6 @@ namespace Monocast.Views
             await Utilities.SaveSubscriptionsAsync(Subscriptions);
             //Frame.Navigate(typeof(SubscriptionView));
             Frame.GoBack();
-            RaisePropertyChanged("ActivePage");
         }
 
         private void DownloadEpisodes()

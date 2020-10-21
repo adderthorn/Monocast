@@ -58,7 +58,7 @@ namespace Monocast
 
             DataContractSerializer serializer = new DataContractSerializer(typeof(T));
             var getStreamResult = await CreateStreamFromFileAsync(CollisionOption);
-            IRandomAccessStream stream = getStreamResult.Item1;
+            IRandomAccessStream stream = getStreamResult.Stream;
             using (var writer = XmlWriter.Create(stream.AsStream(), writerSettings))
             {
                 serializer.WriteObject(writer, ObjectToWrite);
@@ -72,7 +72,7 @@ namespace Monocast
             object obj;
             DataContractSerializer serializer = new DataContractSerializer(typeof(T));
             var getStreamResult = await GetStreamFromFileAsync(CreationCollisionOption.OpenIfExists);
-            using (IRandomAccessStream stream = getStreamResult.Item1)
+            using (IRandomAccessStream stream = getStreamResult.Stream)
             {
                 using (var reader = XmlReader.Create(stream.AsStream()))
                 {
@@ -88,29 +88,29 @@ namespace Monocast
             bool isComplete = false;
             Progress<uint> progressCallback = new Progress<uint>(ProgressCallbackFunction);
             var getStreamResult = await CreateStreamFromFileAsync(collisionOption);
-            var stream = getStreamResult.Item1;
+            var stream = getStreamResult.Stream;
             var tokenSource = new CancellationTokenSource();
             uint value = await stream.WriteAsync(bytes.AsBuffer()).AsTask(tokenSource.Token, progressCallback);
 
             isComplete = await stream.FlushAsync();
 
-            return getStreamResult.Item2;
+            return getStreamResult.File;
         }
 
         public async Task<string> SaveToFileAsync(byte[] bytes, CreationCollisionOption collisionOption)
         {
             bool isComplete = false;
             var getStreamResult = await CreateStreamFromFileAsync(collisionOption);
-            var stream = getStreamResult.Item1;
+            var stream = getStreamResult.Stream;
             await stream.WriteAsync(bytes.AsBuffer());
             isComplete = await stream.FlushAsync();
-            return getStreamResult.Item2;
+            return getStreamResult.File;
         }
 
         public async Task<MemoryStream> LoadFromFileAsync()
         {
             var getStreamResult = await GetStreamFromFileAsync(CreationCollisionOption.OpenIfExists);
-            var stream = getStreamResult.Item1;
+            var stream = getStreamResult.Stream;
             MemoryStream resultStream = new MemoryStream();
             stream.AsStreamForRead().CopyTo(resultStream);
             return resultStream;
@@ -129,25 +129,34 @@ namespace Monocast
                 _File = await StorageFile.GetFileFromPathAsync(FullPath);
             return _File;
         }
+
+        public async Task DeleteStorageFileAsync()
+        {
+            if (!CheckFileExists())
+                return;
+            if (_File == null)
+                _File = await StorageFile.GetFileFromPathAsync(FullPath);
+            await _File.DeleteAsync();
+        }
         #endregion
 
         #region Private Methods
-        private async Task<Tuple<IRandomAccessStream, string>> CreateStreamFromFileAsync(
+        private async Task<StreamWithFileName> CreateStreamFromFileAsync(
             CreationCollisionOption collisionOption)
         {
             StorageFile subFile = await GetStorageFolder().CreateFileAsync(FileName, collisionOption);
             var stream = await subFile.OpenAsync(FileAccessMode.ReadWrite);
-            var resultTuple = Tuple.Create(stream, subFile.Path);
-            return resultTuple;
+            var streamAndFile = new StreamWithFileName(stream, subFile.Path);
+            return streamAndFile;
         }
 
-        private async Task<Tuple<IRandomAccessStream, string>> GetStreamFromFileAsync(
+        private async Task<StreamWithFileName> GetStreamFromFileAsync(
             CreationCollisionOption collisionOption)
         {
             StorageFile subFile = await GetStorageFolder().GetFileAsync(FileName);
             var stream = await subFile.OpenAsync(FileAccessMode.Read);
-            var resultTuple = Tuple.Create(stream, subFile.Path);
-            return resultTuple;
+            var streamAndFile = new StreamWithFileName(stream, subFile.Path);
+            return streamAndFile;
         }
 
         private StorageFolder GetStorageFolder()

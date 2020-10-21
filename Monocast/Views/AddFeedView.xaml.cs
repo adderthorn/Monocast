@@ -85,34 +85,42 @@ namespace Monocast.Views
         {
             try
             {
-                if (await CastHelpers.CheckUriValidAsync(FeedUri))
+                var uriStatus = await CastHelpers.CheckUriValidAsync(FeedUri);
+                if (uriStatus.UriStatus == UriStatus.Valid)
                 {
                     StatusText = "Fetching Podcast Information...";
                     Podcast podcast = await Podcast.GetPodcastAsync(FeedUri);
-                    StatusText = "Saving Subscriptions";
+                    StatusText = "Adding Podcast...";
                     Subscriptions.AddPodcast(podcast);
                     if (App.Settings.CachePodcastArtwork)
                     {
+                        StatusText = "Fetching Artwork...";
                         if (!podcast.Artwork?.IsDownloaded == true) await podcast.Artwork.DownloadFileAsync();
                         podcast.Artwork.SaveToFile();
                     }
+                    StatusText = "Saving Subscriptions";
                     await Utilities.SaveSubscriptionsAsync(Subscriptions);
+                    StatusText = "Done!";
                     this.Frame.Navigate(_PageAfterAdding, podcast);
-                    RaisePropertyChanged("ActivePage");
                     return;
                 }
+                switch (uriStatus.UriStatus)
+                {
+                    case UriStatus.Malformed:
+                        StatusText = "The feed entered does not appear to be a valid URL.";
+                        break;
+                    case UriStatus.NetworkError:
+                        StatusText = "There appears to be an issue connecting to the server. Please check connection and try again.";
+                        break;
+                    case UriStatus.HttpError:
+                        StatusText = string.Format("The Server returned an invalid response: {0} {1}", (int)uriStatus.HttpStatusCode, uriStatus.HttpStatusCode);
+                        break;
+                }
             }
-#if DEBUG
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                StatusText = "URI is not a valid RSS feed, please check URL and try again.";
             }
-#else
-            finally
-            {
-                StatusText = "Feed is not valid, please check URL and try again.";
-            }
-#endif
         }
 
         private void RaisePropertyChanged(string propertyName)

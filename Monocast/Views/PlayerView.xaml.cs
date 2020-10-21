@@ -112,7 +112,6 @@ namespace Monocast.Views
                 ActiveEpisode.PlaybackPosition = ActiveEpisode.Duration;
                 await Utilities.SaveSubscriptionsAsync(Subscriptions);
                 Frame.Navigate(typeof(PodcastView), ActiveEpisode.Podcast);
-                RaisePropertyChanged("ActivePage");
             }
         }
 
@@ -141,10 +140,6 @@ namespace Monocast.Views
             }
             await SetPoster();
             MainMPE.SetMediaPlayer(MediaPlayer);
-            if (ActiveEpisode.Duration != PlayerViewModel.TotalDuration)
-            {
-                ActiveEpisode.Duration = PlayerViewModel.TotalDuration;
-            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -228,6 +223,12 @@ namespace Monocast.Views
             {
                 case MediaPlaybackState.Playing:
                     PlayPauseSymbol = Symbol.Play;
+                    if (ActiveEpisode.Duration != PlayerViewModel.TotalDuration
+                        && PlayerViewModel.TotalDuration > TimeSpan.Zero)
+                    {
+                        ActiveEpisode.Duration = PlayerViewModel.TotalDuration;
+                    }
+
                     break;
                 case MediaPlaybackState.Paused:
                     PlayPauseSymbol = Symbol.Pause;

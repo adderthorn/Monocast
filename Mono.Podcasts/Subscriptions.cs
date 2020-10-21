@@ -304,7 +304,8 @@ namespace Monosoftware.Podcast
                 title = title ?? element.Attribute("text")?.Value;
                 if (string.IsNullOrWhiteSpace(title)) title = url;
                 progress?.Report(title);
-                if (!await CastHelpers.CheckUriValidAsync(url))
+                var uriStatus = await CastHelpers.CheckUriValidAsync(url);
+                if (uriStatus.UriStatus != UriStatus.Valid)
                 {
                     errorCount++;
                     continue;

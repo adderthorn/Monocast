@@ -150,11 +150,6 @@ namespace Monocast
         #region Private Functions
         private void RaisePropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        private void loadSettings()
-        {
-            
-        }
-
         private T getSetting<T>(string settingName, T defaultValue)
         {
             Object obj = roamingSettings.Values[settingName];

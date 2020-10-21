@@ -219,7 +219,7 @@ namespace Monosoftware.Podcast
             get => _Duration;
             set
             {
-                if (value != _Duration)
+                if (value != _Duration && value > TimeSpan.Zero)
                 {
                     _Duration = value;
                     raiseNotifyPropertyChanged(nameof(Duration), nameof(DurationLong));
@@ -269,7 +269,7 @@ namespace Monosoftware.Podcast
             get => Duration.Ticks;
             set
             {
-                if (value != _Duration.Ticks)
+                if (value != _Duration.Ticks && value > 0L)
                 {
                     _Duration = new TimeSpan(value);
                     raiseNotifyPropertyChanged(nameof(Duration), nameof(DurationLong));
@@ -346,9 +346,7 @@ namespace Monosoftware.Podcast
             get
             {
                 // Needed to check to episodes where we do not have a valid duration.
-                //if (Duration == PlaybackPosition && PlaybackPosition > TimeSpan.MinValue) return true;
-                //return false;
-                return (PlaybackPosition > TimeSpan.Zero && Duration > TimeSpan.MinValue);
+                return (PlaybackPosition > TimeSpan.Zero && Duration > TimeSpan.Zero);
             }
             set
             {

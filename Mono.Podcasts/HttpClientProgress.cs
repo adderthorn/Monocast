@@ -95,11 +95,18 @@ namespace Monosoftware.Podcast
         {
             _httpClient = new HttpClient() { Timeout = TIMEOUT };
             _httpClient.DefaultRequestHeaders.Add(CastHelpers.USER_AGENT_TEXT, CastHelpers.UserAgent);
-            using (var response = await _httpClient.GetAsync(DownloadUrl, HttpCompletionOption.ResponseHeadersRead, _CancellationToken))
+            try
             {
-                await downloadFileFromHttpResponseMessage(response);
+                using (var response = await _httpClient.GetAsync(DownloadUrl, HttpCompletionOption.ResponseHeadersRead, _CancellationToken))
+                {
+                    await downloadFileFromHttpResponseMessage(response);
+                }
+                _downloadStream.Seek(0, SeekOrigin.Begin);
             }
-            _downloadStream.Seek(0, SeekOrigin.Begin);
+            catch
+            {
+                _downloadStream = null;
+            }
             return _downloadStream;
         }
 

@@ -74,28 +74,39 @@ namespace Monosoftware.Podcast
         /// </summary>
         /// <param name="UriToTest">Uri to check.</param>
         /// <returns>True/False</returns>
-        public static async Task<bool> CheckUriValidAsync(string UriToTest)
+        public static async Task<UriStatusInfo> CheckUriValidAsync(string UriToTest)
         {
-            if (!Uri.IsWellFormedUriString(UriToTest, UriKind.RelativeOrAbsolute)) return false;
+            if (!Uri.IsWellFormedUriString(UriToTest, UriKind.RelativeOrAbsolute)) return new UriStatusInfo(UriStatus.Malformed);
             return await CheckUriValidAsync(new Uri(UriToTest));
         }
 
-        public static async Task<bool> CheckUriValidAsync(Uri UriToTest)
+        public static async Task<UriStatusInfo> CheckUriValidAsync(Uri UriToTest)
         {
-            if (!UriToTest.IsWellFormedOriginalString()) return false;
+            if (!UriToTest.IsWellFormedOriginalString()) return new UriStatusInfo(UriStatus.Malformed);
             try
             {
                 HttpClient request = new HttpClient();
                 request.DefaultRequestHeaders.Add(USER_AGENT_TEXT, _UserAgent);
-                HttpResponseMessage thing = await request.GetAsync(UriToTest);
-                if ((int)thing.StatusCode < 200 || (int)thing.StatusCode >= 300) return false;
+                HttpResponseMessage response = await request.GetAsync(UriToTest);
+                if ((int)response.StatusCode < 200 || (int)response.StatusCode >= 300)
+                {
+                    return new UriStatusInfo(UriStatus.HttpError, response.StatusCode);
+                }
+                return new UriStatusInfo(UriStatus.Valid, response.StatusCode);
 
             }
             catch (UriFormatException)
             {
-                return false;
+                return new UriStatusInfo(UriStatus.Malformed);
             }
-            return true;
+            catch (HttpRequestException)
+            {
+                return new UriStatusInfo(UriStatus.NetworkError);
+            }
+            catch
+            {
+                return new UriStatusInfo(UriStatus.None);
+            }
         }
         #endregion Helper Functions
     }

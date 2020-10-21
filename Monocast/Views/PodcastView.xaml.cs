@@ -202,7 +202,6 @@ namespace Monocast.Views
                         var item = s as EpisodeListItem;
                         this.Frame.Navigate(typeof(EpisodeView), item.Episode,
                             new Windows.UI.Xaml.Media.Animation.DrillInNavigationTransitionInfo());
-                        RaisePropertyChanged("ActivePage");
                     }
                 };
                 EpisodeListItems.Add(episodeListItem);
@@ -260,7 +259,6 @@ namespace Monocast.Views
             var controlList = new List<DownloadControl>() { control };
             this.Frame.Navigate(typeof(DownloadView), controlList,
                 new Windows.UI.Xaml.Media.Animation.DrillInNavigationTransitionInfo());
-            RaisePropertyChanged("ActivePage");
         }
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
@@ -268,7 +266,6 @@ namespace Monocast.Views
             if (SelectedEpisode == null) return;
             this.Frame.Navigate(typeof(PlayerView), SelectedEpisode,
                 new Windows.UI.Xaml.Media.Animation.DrillInNavigationTransitionInfo());
-            RaisePropertyChanged("ActivePage");
         }
 
         private void MarkEpisodeAsPlayed(object sender, RoutedEventArgs e)
@@ -316,7 +313,6 @@ namespace Monocast.Views
             PlaybackService.Instance.NowPlayingEpisode = SelectedEpisode;
             Frame.Navigate(typeof(EpisodeView), SelectedEpisode,
                 new Windows.UI.Xaml.Media.Animation.DrillInNavigationTransitionInfo());
-            RaisePropertyChanged("ActivePage");
         }
 
         private void setEpisode(Episode episode, bool forceSelect = false)

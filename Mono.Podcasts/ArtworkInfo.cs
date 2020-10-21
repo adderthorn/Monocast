@@ -116,6 +116,7 @@ namespace Monosoftware.Podcast
                 };
             }
             _MediaStream = await httpClient.StartDownloadAsync();
+            if (_MediaStream == null) return;
             CopyStreamToBytes();
             LastCacheTime = DateTime.Now;
         }
@@ -128,6 +129,8 @@ namespace Monosoftware.Podcast
         {
             if (isDisposed)
                 throw new ObjectDisposedException("MediaStream", "The object is currently NULL or disposed. Check IsDownloaded before accessing the stream.");
+            if (MediaBytes == null)
+                return null;
             MemoryStream tempStream = new MemoryStream(MediaBytes);
             tempStream.Seek(0, SeekOrigin.Begin);
             return tempStream;

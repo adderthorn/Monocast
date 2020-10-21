@@ -61,7 +61,7 @@ namespace Monocast
         }
         public static async Task GetLocalImagesAsync(this Subscriptions subscriptions)
         {
-            var podcastList = subscriptions.Podcasts.Where(p => p.Artwork.IsDownloaded);
+            var podcastList = subscriptions.Podcasts;
             foreach (var podcast in podcastList)
             {
                 AppData appData = new AppData(podcast.Artwork.LocalArtworkPath, FolderLocation.Local);
@@ -71,8 +71,6 @@ namespace Monocast
                     var assembly = typeof(Monocast.Program).GetTypeInfo().Assembly;
                     const string fileName = "Monocast.Resources.placeholder_image.bmp";
                     imgStream = assembly.GetManifestResourceStream(fileName);
-                    //imgStream = new BitmapImage(new Uri("ms-appx:///Resources/placeholder_image.bmp"));
-                    //imgStream = new FileStream("ms-appx:///Resources/placeholder_image.bmp", FileMode.Open);
                 }
                 else if (!appData.CheckFileExists() && podcast.Artwork.MediaSource != null)
                 {
@@ -82,6 +80,12 @@ namespace Monocast
                 else
                 {
                     imgStream = await appData.LoadFromFileAsync();
+                }
+                if (imgStream == null)
+                {
+                    var assembly = typeof(Monocast.Program).GetTypeInfo().Assembly;
+                    const string fileName = "Monocast.Resources.placeholder_image.bmp";
+                    imgStream = assembly.GetManifestResourceStream(fileName);
                 }
                 imgStream.Seek(0, SeekOrigin.Begin);
                 podcast.Artwork.SetStream(imgStream);
@@ -135,9 +139,9 @@ namespace Monocast
         public static Uri GetBestArtworkSoruce(this ArtworkInfo artworkInfo)
         {
             Uri uri = artworkInfo.MediaSource;
-            if (!string.IsNullOrWhiteSpace(artworkInfo.LocalArtworkPath))
+            var appData = new AppData(artworkInfo.LocalArtworkPath, FolderLocation.Local);
+            if (appData.CheckFileExists())
             {
-                var appData = new AppData(artworkInfo.LocalArtworkPath, FolderLocation.Local);
                 return new Uri(appData.FullPath);
             }
             return uri;

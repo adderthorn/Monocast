@@ -1,5 +1,18 @@
 # Monocast Changelog #
 
+# 2.0.56 ##
+
+Many New Features!
+
+* Ability to archive and mark as played on podcast screen
+* New circle around episode shows progress
+* Ability to mark all as played by right-click on podcast on main screen
+* Fixed bug where artwork would disappear
+* Fixed bug where app would crash after opening multiple times
+* Fixed layout for podcast episodes
+* Fixed bug where opening links in description would load page inside Monocast rather than opening in a browser
+* Additional checks for artwork to prevent empty artwork
+
 ## 1.2.28 ##
 
 * Fixed bug where importing OPML files may fail if text/title is not set
