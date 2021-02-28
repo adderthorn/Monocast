@@ -71,6 +71,7 @@ namespace Monocast.Controls
         private Visibility ProgressBarVisibility =>
             (Episode.PlaybackPositionLong > 0
             && Episode.PlaybackPositionLong != Episode.DurationLong
+            && !Episode.IsPlayed
             && !CanSelect) ? Visibility.Visible : Visibility.Collapsed;
 
         private Visibility UnreadVisibility =>

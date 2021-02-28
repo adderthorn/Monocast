@@ -7,11 +7,20 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel Orientation="Vertical" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
         <!--<TextBlock x:Name="HeaderText" HorizontalAlignment="Center" VerticalAlignment="Center"
                    Text="My Subscriptions" FontWeight="Bold" Height="35"/>-->
         <GridView x:Name="PodcastsGrid" IsItemClickEnabled="True" IsTapEnabled="True"
-                  ItemClick="PodcastsGrid_ItemClick" Margin="5">
+                  Grid.Column="0" Grid.Row="0"
+                  ItemClick="PodcastsGrid_ItemClick" Margin="5" ScrollViewer.VerticalScrollMode="Enabled"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch"
+                  >
         </GridView>
-    </StackPanel>
+    </Grid>
 </Page>

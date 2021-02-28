@@ -10,6 +10,7 @@
         <Grid.ContextFlyout>
             <MenuFlyout>
                 <MenuFlyoutItem Text="Mark All Played" Click="MarkAllPlayed_Click"/>
+                <MenuFlyoutItem Text="Archive All" Click="ArchiveAll_Click"/>
                 <MenuFlyoutItem Text="Copy Feed Url" Click="CopyFeedUrl_Click"/>
                 <MenuFlyoutItem Text="Unsubscribe" Click="UnsubscribeMenuFlyoutItem_Click"/>
             </MenuFlyout>

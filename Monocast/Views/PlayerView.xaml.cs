@@ -14,6 +14,9 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Input;
 using System.Net.NetworkInformation;
+using Windows.System;
+using System.Diagnostics;
+using Windows.UI.Core;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -85,6 +88,28 @@ namespace Monocast.Views
             Unloaded += PlayerView_Unloaded;
             PlayerViewModel.PropertyChanged += PlayerViewModel_PropertyChangedAsync;
             PlayerViewModel.PlaybackSession.PropertyChanged += PlayerViewModel_PropertyChangedAsync;
+
+            Window.Current.CoreWindow.KeyUp += (s, e) =>
+            {
+                if (PlayerViewModel?.PlaybackSession != null)
+                {
+                    switch (e.VirtualKey)
+                    {
+                        case VirtualKey.K:
+                            PlayerViewModel.TogglePlayPause();
+                            e.Handled = true;
+                            break;
+                        case VirtualKey.J:
+                            PlayerViewModel.JumpPlaybackBySeconds(App.Settings.SkipBackTime * -1);
+                            e.Handled = true;
+                            break;
+                        case VirtualKey.L:
+                            PlayerViewModel.JumpPlaybackBySeconds(App.Settings.SkipForwardTime);
+                            e.Handled = true;
+                            break;
+                    }
+                }
+            };
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

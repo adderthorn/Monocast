@@ -58,6 +58,20 @@ namespace Monocast.ViewModels
             }
         }
 
+        public void JumpPlaybackBySeconds(double Seconds)
+        {
+            TimeSpan newPosition = TimeSpan.FromSeconds(Seconds) + mediaPlayer.PlaybackSession.Position;
+            if (newPosition < TimeSpan.Zero)
+            {
+                newPosition = TimeSpan.Zero;
+            }
+            else if (newPosition > mediaPlayer.PlaybackSession.NaturalDuration)
+            {
+                newPosition = mediaPlayer.PlaybackSession.NaturalDuration;
+            }
+            mediaPlayer.PlaybackSession.Position = newPosition;
+        }
+
         private void RaisePropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

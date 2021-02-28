@@ -272,6 +272,7 @@ namespace Monocast
                 await Utilities.SaveSubscriptionsAsync(Subscriptions);
                 SyncText = "Done!";
                 SyncRotateIcon.Stop();
+                RaisePropertyChanged(nameof(Subscriptions));
                 await Task.Delay(5000);
                 SyncText = "Sync Podcasts";
             }

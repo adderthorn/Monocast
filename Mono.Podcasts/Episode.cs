@@ -346,7 +346,7 @@ namespace Monosoftware.Podcast
             get
             {
                 // Needed to check to episodes where we do not have a valid duration.
-                return (PlaybackPosition > TimeSpan.Zero && Duration > TimeSpan.Zero);
+                return (Duration > TimeSpan.Zero && Duration == PlaybackPosition);
             }
             set
             {

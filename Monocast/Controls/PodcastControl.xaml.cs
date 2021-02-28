@@ -100,5 +100,15 @@ namespace Monocast.Controls
             dataPackage.SetText(_Podcast.FeedUri.AbsoluteUri);
             Clipboard.SetContent(dataPackage);
         }
+
+        private void ArchiveAll_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (Episode ep in _Podcast.Episodes)
+            {
+                ep.IsPlayed = true;
+                ep.IsArchived = true;
+            }
+            RaisePropertyChanged(nameof(HasUnreadEpisodes));
+        }
     }
 }

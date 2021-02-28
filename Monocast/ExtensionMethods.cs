@@ -51,7 +51,7 @@ namespace Monocast
             }
             foreach (var art in podcastList.Select(p => p.Artwork))
             {
-                string fileName = !string.IsNullOrWhiteSpace(art.LocalArtworkPath) ? new AppData(art.LocalArtworkPath, FolderLocation.Local).FullPath : null;
+                string fileName = !string.IsNullOrWhiteSpace(art.LocalArtworkPath) ? new AppData(art.LocalArtworkPath, FolderLocation.Local).FileName : null;
                 if (!art.IsDownloaded)
                 {
                     await art.DownloadFileAsync();

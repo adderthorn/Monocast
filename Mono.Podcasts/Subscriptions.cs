@@ -380,7 +380,6 @@ namespace Monosoftware.Podcast
         #region Private Methods
         private void raiseNotifyPropertyChanged(string propertyName)
         {
-            Debug.WriteLine(string.Format("Subscription property invoked: {0}", propertyName));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 

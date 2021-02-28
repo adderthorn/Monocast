@@ -1,6 +1,11 @@
 # Monocast Changelog #
 
-# 2.0.56 ##
+## 2.0.94 ##
+
+* Fixed bug where episodes marked as played will continue to appear with an unplayed progress indicator
+* Fixed an issue where subscriptions list would not scroll if contents expanded beyond the window
+
+## 2.0.56 ##
 
 Many New Features!
 
