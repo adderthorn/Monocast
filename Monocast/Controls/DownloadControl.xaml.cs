@@ -90,6 +90,7 @@ namespace Monocast.Controls
                         DownloadPercent.Text = "Writing File...";
                     }
                 });
+
                 menuFlyoutItemCancel.IsEnabled = true;
                 var episodeStreamTask = Episode.DownloadFileAsync(progressCallback, cancellationToken);
                 string fileName = Episode.Title.ToSafeWindowsNameString()
@@ -99,6 +100,10 @@ namespace Monocast.Controls
                 using (var outputStream = await DownloadFileLocation.OpenStreamForWriteAsync())
                 {
                     await episodeStreamTask;
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        throw new TaskCanceledException();
+                    }
                     if (SaveToken)
                     {
                         Episode.LocalFileToken = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.Add(DownloadFileLocation);
