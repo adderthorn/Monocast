@@ -11,6 +11,8 @@
             <StackPanel x:Name="ContentContainer" Orientation="Vertical" VerticalAlignment="Stretch">
                 <TextBlock Margin="10,10,10,0" Text="Sync Podcasts on Launch:"/>
                 <ToggleSwitch x:Name="AutoSyncToggle" Margin="10,0" IsOn="{x:Bind Settings.SyncOnLaunch, Mode=TwoWay}"/>
+                <TextBlock Margin="10,10,10,0" Text="Sort Podcasts By Name:"/>
+                <ToggleSwitch x:Name="SortPodcastsByNameToggle" Margin="10,0" IsOn="{x:Bind Settings.SortPodcastsByName, Mode=TwoWay}"/>
                 <TextBlock Margin="10,10,10,0" Text="Locally Cache Podcast Artwork:"/>
                 <ToggleSwitch x:Name="CacheArtworkToggle" Margin="10,0" IsOn="{x:Bind Settings.CachePodcastArtwork, Mode=TwoWay}"/>
                 <TextBlock Margin="10,10,10,0" Text="Use Episode Artwork:"/>

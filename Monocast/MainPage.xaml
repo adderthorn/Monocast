@@ -5,7 +5,7 @@
     xmlns:local="using:Monocast"
     xmlns:controls="using:Monocast.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:Windows10version1803="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 6)"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     TabNavigation="Cycle">
     <Page.Resources>
         <Storyboard x:Name="SyncRotateIcon" AutoReverse="False" RepeatBehavior="Forever">
@@ -14,7 +14,7 @@
         </Storyboard>
     </Page.Resources>
     <NavigationView x:Name="NavView" Header="{x:Bind CurrentHeader, Mode=OneWay}" Padding="0" AlwaysShowHeader="True"
-                    Windows10version1803:BackRequested="NavView_BackRequested" Windows10version1803:IsBackEnabled="{x:Bind AppFrame.CanGoBack, Mode=OneWay}"
+                    BackRequested="NavView_BackRequested" IsBackEnabled="{x:Bind AppFrame.CanGoBack, Mode=OneWay}"
                     SelectionChanged="NavView_SelectionChanged" IsSettingsVisible="True">
         <NavigationView.MenuItems>
             

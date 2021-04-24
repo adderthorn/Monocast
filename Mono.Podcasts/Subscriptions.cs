@@ -101,6 +101,10 @@ namespace Monosoftware.Podcast
         /// <param name="podcast">Podcast to add.</param>
         public void AddPodcast(Podcast podcast)
         {
+            if (podcast.SortOrder == 0)
+            {
+                podcast.SortOrder = getNextSortOrder();
+            }
             Podcasts.Add(podcast);
         }
 
@@ -133,7 +137,7 @@ namespace Monosoftware.Podcast
         /// <returns></returns>
         public async Task RefreshFeedsAsync(bool UseEpisodeArtwork = false, int TotalEpisodesToKeep = 0, bool AppendToEnd = true)
         {
-            int errorCount = 0;
+            var errorPodcasts = new Dictionary<Podcast, string>();
             int notResolvedCount = 0;
             foreach (var podcast in Podcasts)
             {
@@ -147,19 +151,26 @@ namespace Monosoftware.Podcast
                     if (ex.Message.ToLower().Contains("uri not resolved"))
                         notResolvedCount++;
                     Debug.WriteLine("NullReferenceException! Got error '{0}' on podcast {1}.", ex.Message, podcast.Title);
-                    errorCount++;
+                    errorPodcasts.Add(podcast, ex.Message);
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine("General Exception! Got error '{0}' on podcast {1}.", ex.Message, podcast.Title);
-                    errorCount++;
+                    errorPodcasts.Add(podcast, ex.Message);
                 }
-                if (errorCount > 1) break;
+                //if (errorPodcasts.Count > 1) break;
             }
             if (notResolvedCount > 0)
-                throw new Exception("Offline!");
-            else if (errorCount > 0 && notResolvedCount == 0)
-                throw new Exception("Error!");
+                throw new Exception("Network connection appears to be offline!");
+            else if (errorPodcasts.Count > 0 && notResolvedCount == 0)
+            {
+                var messageBuilder = new StringBuilder("Error parsing podcast(s):");
+                foreach (var kvp in errorPodcasts)
+                {
+                    messageBuilder.AppendLine(string.Format("{0} for reason {1}", kvp.Key.Title, kvp.Value));
+                }
+                throw new Exception(messageBuilder.ToString());
+            }
             raiseNotifyPropertyChanged(nameof(Podcasts));
         }
 
@@ -414,6 +425,8 @@ namespace Monosoftware.Podcast
                 podcast.PropertyChanged += raisePodcastChanged;
             }
         }
+
+        private uint getNextSortOrder() => Podcasts.Max(p => p.SortOrder) + 1;
         #endregion
 
         #region Static Methods

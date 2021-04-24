@@ -25,6 +25,7 @@ namespace Monocast
         private const bool useEpisodeArtwork_DEFAULT = false;
         private const bool cachePodcastArtwork_DEFAULT = true;
         private const bool showArchived_DEFAULT = true;
+        private const bool sortPodcastsByName_DEFAULT = false;
 
         private bool _SyncOnLaunch;
         private int _EpisodesToKeep;
@@ -33,6 +34,7 @@ namespace Monocast
         private bool _UseEpisodeArtwork;
         private bool _CachePodcastArtwork;
         private bool _ShowArchived = true;
+        private bool _SortPodcastsByName;
         #endregion
 
         #region Public Properties
@@ -127,6 +129,20 @@ namespace Monocast
                 }
             }
         }
+
+        public bool SortPodcastsByName
+        {
+            get => _SortPodcastsByName;
+            set
+            {
+                if (_SortPodcastsByName != value)
+                {
+                    _SortPodcastsByName = value;
+                    RaisePropertyChanged(nameof(SortPodcastsByName));
+                    roamingSettings.Values[nameof(SortPodcastsByName)] = value;
+                }
+            }
+        }
         #endregion
 
         #region Constructors & Static Methods
@@ -144,6 +160,7 @@ namespace Monocast
             SkipBackTime = getSetting(nameof(SkipBackTime), skipBackTime_DEFAULT);
             UseEpisodeArtwork = getSetting(nameof(UseEpisodeArtwork), useEpisodeArtwork_DEFAULT);
             CachePodcastArtwork = getSetting(nameof(CachePodcastArtwork), cachePodcastArtwork_DEFAULT);
+            SortPodcastsByName = getSetting(nameof(SortPodcastsByName), sortPodcastsByName_DEFAULT);
         }
         #endregion
 

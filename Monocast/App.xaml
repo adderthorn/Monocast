@@ -7,6 +7,7 @@
         <ResourceDictionary>
             <SolidColorBrush x:Key="sliderBrush" Color="Aqua" />
             <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <ResourceDictionary Source="/Styles/Styles.xaml"/>
                 <ResourceDictionary Source="/Resources/Resources.xaml"/>
             </ResourceDictionary.MergedDictionaries>

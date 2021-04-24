@@ -9,6 +9,7 @@ using Monosoftware.Podcast;
 using Monocast.Controls;
 using System.IO;
 using Windows.Storage;
+using System.Linq;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -30,7 +31,12 @@ namespace Monocast.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            foreach (Podcast podcast in Subscriptions.Podcasts)
+            IEnumerable<Podcast> podcasts = Subscriptions.Podcasts.OrderBy(p => p.SortOrder);
+            if (App.Settings.SortPodcastsByName)
+            {
+                podcasts = podcasts.OrderBy(p => p.Title);
+            }
+            foreach (Podcast podcast in podcasts)
             {
                 PodcastControl podcastCtrl = new PodcastControl(podcast);
                 podcastCtrl.UnsubscribePodcast += UnsubscribePodcast_Click;

@@ -89,6 +89,7 @@ namespace Monosoftware.Podcast
         private string _Description;
         private ArtworkInfo _Artwork;
         private string _Copyright;
+        private uint _SortOrder;
         private ObservableCollection<Episode> _Episodes;
         #endregion
 
@@ -362,6 +363,23 @@ namespace Monosoftware.Podcast
             {
                 _Episodes = value;
                 _Episodes.CollectionChanged += episodes_CollectionChanged;
+            }
+        }
+
+        /// <summary>
+        /// Sort order for the podcasts.
+        /// </summary>
+        [DataMember(Order = 1)]
+        public uint SortOrder
+        {
+            get => _SortOrder;
+            set
+            {
+                if (value != _SortOrder)
+                {
+                    _SortOrder = value;
+                    raisePropertyChanged(nameof(SortOrder));
+                }
             }
         }
 

@@ -246,8 +246,8 @@ namespace Monocast
         {
             if (e.IsSettingsSelected)
             {
+                sender.Header = "Settings";
                 AppFrame.Navigate(typeof(SettingsView));
-
             }
             else
             {
