@@ -426,7 +426,15 @@ namespace Monosoftware.Podcast
             }
         }
 
-        private uint getNextSortOrder() => Podcasts.Max(p => p.SortOrder) + 1;
+        private uint getNextSortOrder()
+        {
+            if (Podcasts == null || Podcasts.Count == 0)
+            {
+                return 0;
+            }
+
+            return Podcasts.Max(p => p.SortOrder) + 1;
+        }
         #endregion
 
         #region Static Methods

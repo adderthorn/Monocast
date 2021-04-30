@@ -117,8 +117,9 @@ namespace Monocast.Views
                         break;
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex);
                 StatusText = "URI is not a valid RSS feed, please check URL and try again.";
             }
         }
