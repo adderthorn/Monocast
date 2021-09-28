@@ -18,7 +18,7 @@ namespace Monosoftware.Podcast
     /// <summary>
     /// Class that stores subscriptions to podcasts.
     /// </summary>
-    [DataContract]
+    [DataContract(Namespace ="http://www.monocast.co/Monosoftware.Podcast")]
     public class Subscriptions : INotifyPropertyChanged
     {
         #region Constants

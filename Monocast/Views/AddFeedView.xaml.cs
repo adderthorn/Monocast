@@ -83,45 +83,57 @@ namespace Monocast.Views
 
         private async Task SubscribeToFeedAsync()
         {
+            Podcast podcast = null;
             try
             {
                 var uriStatus = await CastHelpers.CheckUriValidAsync(FeedUri);
                 if (uriStatus.UriStatus == UriStatus.Valid)
                 {
                     StatusText = "Fetching Podcast Information...";
-                    Podcast podcast = await Podcast.GetPodcastAsync(FeedUri);
+                    podcast = await Podcast.GetPodcastAsync(FeedUri);
                     StatusText = "Adding Podcast...";
                     Subscriptions.AddPodcast(podcast);
-                    if (App.Settings.CachePodcastArtwork)
-                    {
-                        StatusText = "Fetching Artwork...";
-                        if (!podcast.Artwork?.IsDownloaded == true) await podcast.Artwork.DownloadFileAsync();
-                        podcast.Artwork.SaveToFile();
-                    }
-                    StatusText = "Saving Subscriptions";
-                    await Utilities.SaveSubscriptionsAsync(Subscriptions);
-                    StatusText = "Done!";
-                    this.Frame.Navigate(_PageAfterAdding, podcast);
-                    return;
                 }
                 switch (uriStatus.UriStatus)
                 {
                     case UriStatus.Malformed:
                         StatusText = "The feed entered does not appear to be a valid URL.";
-                        break;
+                        return;
                     case UriStatus.NetworkError:
                         StatusText = "There appears to be an issue connecting to the server. Please check connection and try again.";
-                        break;
+                        return;
                     case UriStatus.HttpError:
                         StatusText = string.Format("The Server returned an invalid response: {0} {1}", (int)uriStatus.HttpStatusCode, uriStatus.HttpStatusCode);
-                        break;
+                        return;
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
                 StatusText = "URI is not a valid RSS feed, please check URL and try again.";
+                return;
             }
+
+            if (App.Settings.CachePodcastArtwork && podcast != null)
+            {
+                StatusText = "Fetching Artwork...";
+                if (!podcast.Artwork?.IsDownloaded == true) await podcast.Artwork.DownloadFileAsync();
+                podcast.Artwork.SaveToFile(podcast.Title);
+            }
+
+            StatusText = "Saving Subscriptions";
+            try
+            {
+                await Utilities.SaveSubscriptionsAsync(Subscriptions);
+            }
+            catch (Exception ex)
+            {
+                MessageDialog messageDialog = new MessageDialog(ex.Message, "Error");
+                await messageDialog.ShowAsync();
+                return;
+            }
+            StatusText = "Done!";
+            this.Frame.Navigate(_PageAfterAdding, podcast);
         }
 
         private void RaisePropertyChanged(string propertyName)

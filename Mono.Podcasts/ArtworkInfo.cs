@@ -9,7 +9,7 @@ namespace Monosoftware.Podcast
     /// <summary>
     /// Class that represents information about the artwork; at podcast or at episode level.
     /// </summary>
-    [DataContract]
+    [DataContract(Namespace = "http://www.monocast.co/Monosoftware.Podcast")]
     public class ArtworkInfo : IDisposable, IDownloadable
     {
         #region Private Variables

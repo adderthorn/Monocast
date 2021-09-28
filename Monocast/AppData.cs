@@ -50,7 +50,7 @@ namespace Monocast
             XmlWriterSettings writerSettings = new XmlWriterSettings()
             {
                 Indent = true,
-                IndentChars = "    ",
+                IndentChars = "  ",
                 NewLineHandling = NewLineHandling.Replace,
                 NewLineChars = "\r\n",
                 WriteEndDocumentOnClose = true
@@ -58,13 +58,14 @@ namespace Monocast
 
             DataContractSerializer serializer = new DataContractSerializer(typeof(T));
             var getStreamResult = await CreateStreamFromFileAsync(CollisionOption);
-            IRandomAccessStream stream = getStreamResult.Stream;
-            using (var writer = XmlWriter.Create(stream.AsStream(), writerSettings))
+            using (IRandomAccessStream stream = getStreamResult.Stream)
             {
-                serializer.WriteObject(writer, ObjectToWrite);
+                using (var writer = XmlWriter.Create(stream.AsStream(), writerSettings))
+                {
+                    serializer.WriteObject(writer, ObjectToWrite);
+                }
+                await stream.FlushAsync();
             }
-            await stream.FlushAsync();
-            stream.Dispose();
         }
 
         public async Task<T> DeserializeFromFileAsync<T>()
@@ -141,8 +142,7 @@ namespace Monocast
         #endregion
 
         #region Private Methods
-        private async Task<StreamWithFileName> CreateStreamFromFileAsync(
-            CreationCollisionOption collisionOption)
+        private async Task<StreamWithFileName> CreateStreamFromFileAsync(CreationCollisionOption collisionOption)
         {
             StorageFile subFile = await GetStorageFolder().CreateFileAsync(FileName, collisionOption);
             var stream = await subFile.OpenAsync(FileAccessMode.ReadWrite);

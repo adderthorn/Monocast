@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Windows.Storage;
-using Windows.Storage.AccessCache;
-using System.Threading.Tasks;
 using System.Runtime.Serialization;
-using System.Diagnostics;
 using System.ComponentModel;
 
 namespace Monocast
@@ -35,6 +29,7 @@ namespace Monocast
         private bool _CachePodcastArtwork;
         private bool _ShowArchived = true;
         private bool _SortPodcastsByName;
+        private string _DownloadFolderToken;
         #endregion
 
         #region Public Properties
@@ -143,6 +138,20 @@ namespace Monocast
                 }
             }
         }
+
+        public string DownloadFolderToken
+        {
+            get => _DownloadFolderToken;
+            set
+            {
+                if (_DownloadFolderToken != value)
+                {
+                    _DownloadFolderToken = value;
+                    RaisePropertyChanged(nameof(DownloadFolderToken));
+                    roamingSettings.Values[nameof(DownloadFolderToken)] = value;
+                }
+            }
+        }
         #endregion
 
         #region Constructors & Static Methods
@@ -161,6 +170,7 @@ namespace Monocast
             UseEpisodeArtwork = getSetting(nameof(UseEpisodeArtwork), useEpisodeArtwork_DEFAULT);
             CachePodcastArtwork = getSetting(nameof(CachePodcastArtwork), cachePodcastArtwork_DEFAULT);
             SortPodcastsByName = getSetting(nameof(SortPodcastsByName), sortPodcastsByName_DEFAULT);
+            DownloadFolderToken = getSetting(nameof(DownloadFolderToken), string.Empty);
         }
         #endregion
 

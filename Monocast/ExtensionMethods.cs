@@ -49,14 +49,21 @@ namespace Monocast
             {
                 podcastList = subscriptions.Podcasts.Where(p => Math.Abs((DateTime.Now - p.Artwork.LastCacheTime).Days) > 7).ToList();
             }
-            foreach (var art in podcastList.Select(p => p.Artwork))
+            foreach (var item in podcastList.Select(p => new { Title = p.Title, Artwork = p.Artwork }))
             {
-                string fileName = !string.IsNullOrWhiteSpace(art.LocalArtworkPath) ? new AppData(art.LocalArtworkPath, FolderLocation.Local).FileName : null;
-                if (!art.IsDownloaded)
+                if (!string.IsNullOrEmpty(item.Artwork.LocalArtworkPath))
                 {
-                    await art.DownloadFileAsync();
+                    AppData data = new AppData(item.Artwork.LocalArtworkPath, FolderLocation.Local);
+                    if (data.CheckFileExists())
+                    {
+                        await data.DeleteStorageFileAsync();
+                    }
                 }
-                art.SaveToFile(fileName);
+                if (!item.Artwork.IsDownloaded)
+                {
+                    await item.Artwork.DownloadFileAsync();
+                }
+                item.Artwork.SaveToFile(item.Title);
             }
         }
         public static async Task GetLocalImagesAsync(this Subscriptions subscriptions)
@@ -139,21 +146,22 @@ namespace Monocast
         public static Uri GetBestArtworkSoruce(this ArtworkInfo artworkInfo)
         {
             Uri uri = artworkInfo.MediaSource;
-            var appData = new AppData(artworkInfo.LocalArtworkPath, FolderLocation.Local);
-            if (appData.CheckFileExists())
+            if (!string.IsNullOrEmpty(artworkInfo.LocalArtworkPath))
             {
-                return new Uri(appData.FullPath);
+                var appData = new AppData(artworkInfo.LocalArtworkPath, FolderLocation.Local);
+                if (appData.CheckFileExists())
+                {
+                    uri = new Uri(appData.FullPath);
+                }
             }
             return uri;
         }
 
-        public async static void SaveToFile(this ArtworkInfo artworkInfo, string FileName = null)
+        public async static void SaveToFile(this ArtworkInfo artworkInfo, string FileName)
         {
-            if (string.IsNullOrWhiteSpace(FileName))
-                FileName = Guid.NewGuid().ToString().ToLower();
             FileName = FileName.ToSafeWindowsNameString() + Path.GetExtension(artworkInfo.MediaSource.GetAbsoluteFileName());
             var appData = new AppData(FileName, FolderLocation.Local);
-            var filePath = await appData.SaveToFileAsync(artworkInfo.MediaBytes, CreationCollisionOption.ReplaceExisting);
+            _ = await appData.SaveToFileAsync(artworkInfo.MediaBytes, CreationCollisionOption.ReplaceExisting);
             artworkInfo.LocalArtworkPath = FileName;
         }
         #endregion

@@ -221,6 +221,10 @@ namespace Monocast.Views
                 await artworkImage.SetSourceAsync(randomAccessStream);
                 //Artwork = artworkImage;
             }
+            if (!App.Settings.ShowArchived)
+            {
+                toggleArchived();
+            }
         }
 
         private void Bmp_ImageOpened(object sender, RoutedEventArgs e)

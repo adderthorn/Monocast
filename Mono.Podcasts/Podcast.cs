@@ -16,7 +16,7 @@ using System.Collections.Specialized;
 
 namespace Monosoftware.Podcast
 {
-    [DataContract(IsReference = true)]
+    [DataContract(IsReference = true, Namespace = "http://www.monocast.co/Monosoftware.Podcast")]
     public class Podcast: INotifyPropertyChanged
     {
         #region Class Constructors
@@ -90,6 +90,7 @@ namespace Monosoftware.Podcast
         private ArtworkInfo _Artwork;
         private string _Copyright;
         private uint _SortOrder;
+        private string _Guid;
         private ObservableCollection<Episode> _Episodes;
         #endregion
 
@@ -369,7 +370,7 @@ namespace Monosoftware.Podcast
         /// <summary>
         /// Sort order for the podcasts.
         /// </summary>
-        [DataMember(Order = 1)]
+        [DataMember(Order = 2)]
         public uint SortOrder
         {
             get => _SortOrder;
@@ -379,6 +380,20 @@ namespace Monosoftware.Podcast
                 {
                     _SortOrder = value;
                     raisePropertyChanged(nameof(SortOrder));
+                }
+            }
+        }
+
+        [DataMember(Order = 1)]
+        public string Guid
+        {
+            get => _Guid;
+            set
+            {
+                if (value != _Guid)
+                {
+                    _Guid = value;
+                    raisePropertyChanged(nameof(Guid));
                 }
             }
         }
@@ -606,118 +621,111 @@ namespace Monosoftware.Podcast
                 bool foundBuildDate = false;
                 bool foundLink = false;
                 int episodeCount = 0;
-                try
+                while (await feedReader.Read())
                 {
-                    while (await feedReader.Read())
+                    switch (feedReader.ElementName)
                     {
-                        switch (feedReader.ElementName)
-                        {
-                            case RssElementNames.Title:
-                                podcast.Title = await feedReader.ReadValue<string>();
+                        case RssElementNames.Title:
+                            podcast.Title = await feedReader.ReadValue<string>();
+                            continue;
+                        case RssElementNames.Link:
+                            // workaround for Megaphone.FM links that contain RSS feed in an atom link
+                            var content = await feedReader.ReadContent();
+                            if (content.Attributes.Any(a => a.Name == RssElementNamesExt.Type && a.Value == RssElementNamesExt.RssXml))
+                            {
                                 continue;
-                            case RssElementNames.Link:
-                                // workaround for Megaphone.FM links that contain RSS feed in an atom link
-                                var content = await feedReader.ReadContent();
-                                if (content.Attributes.Any(a => a.Name == RssElementNamesExt.Type && a.Value == RssElementNamesExt.RssXml))
+                            }
+                            if (!foundLink)
+                            {
+                                Uri linkUri = CastHelpers.CheckForUri(content);
+                                if (linkUri != null)
                                 {
-                                    continue;
+                                    podcast.Link = linkUri;
+                                    foundLink = true;
                                 }
-                                if (!foundLink)
+                            }
+                            continue;
+                        case RssElementNamesExt.Subtitle:
+                            podcast.Description = await feedReader.ReadValue<string>();
+                            continue;
+                        case RssElementNamesExt.Artwork:
+                        case RssElementNames.Image:
+                            Uri artworkUri = CastHelpers.CheckForUri(await feedReader.ReadContent());
+                            if (artworkUri == null) continue;
+                            var artworkUriStatus = await CastHelpers.CheckUriValidAsync(artworkUri);
+                            if (artworkUriStatus.UriStatus == UriStatus.Valid)
+                            {
+                                foundHighResImage = true;
+                                podcast.Artwork = new ArtworkInfo(artworkUri);
+                                await podcast.Artwork.DownloadFileAsync();
+                            }
+                            continue;
+                        case RssElementNames.Copyright:
+                            podcast.Copyright = await feedReader.ReadValue<string>();
+                            continue;
+                        case RssElementNames.Language:
+                            podcast.Language = await feedReader.ReadValue<string>();
+                            continue;
+                        case RssElementNames.LastBuildDate:
+                        case RssElementNames.PubDate:
+                            if (!foundBuildDate)
+                            {
+                                DateTime buildDate;
+                                try
                                 {
-                                    Uri linkUri = CastHelpers.CheckForUri(content);
-                                    if (linkUri != null)
-                                    {
-                                        podcast.Link = linkUri;
-                                        foundLink = true;
-                                    }
+                                    buildDate = await feedReader.ReadValue<DateTime>();
+                                    foundBuildDate = true;
                                 }
-                                continue;
-                            case RssElementNamesExt.Subtitle:
-                                podcast.Description = await feedReader.ReadValue<string>();
-                                continue;
-                            case RssElementNamesExt.Artwork:
-                            case RssElementNames.Image:
-                                Uri artworkUri = CastHelpers.CheckForUri(await feedReader.ReadContent());
-                                if (artworkUri == null) continue;
-                                var artworkUriStatus = await CastHelpers.CheckUriValidAsync(artworkUri);
-                                if (artworkUriStatus.UriStatus == UriStatus.Valid)
+                                catch
                                 {
-                                    foundHighResImage = true;
-                                    podcast.Artwork = new ArtworkInfo(artworkUri);
-                                    await podcast.Artwork.DownloadFileAsync();
+                                    buildDate = DateTime.MinValue;
                                 }
-                                continue;
-                            case RssElementNames.Copyright:
-                                podcast.Copyright = await feedReader.ReadValue<string>();
-                                continue;
-                            case RssElementNames.Language:
-                                podcast.Language = await feedReader.ReadValue<string>();
-                                continue;
-                            case RssElementNames.LastBuildDate:
-                            case RssElementNames.PubDate:
-                                if (!foundBuildDate)
-                                {
-                                    DateTime buildDate;
-                                    try
-                                    {
-                                        buildDate = await feedReader.ReadValue<DateTime>();
-                                        foundBuildDate = true;
-                                    }
-                                    catch
-                                    {
-                                        buildDate = DateTime.MinValue;
-                                    }
-                                    podcast.LastBuildDate = buildDate;
-                                }
-                                continue;
-                            case RssElementNames.Author:
-                                podcast.Author = await feedReader.ReadValue<string>();
-                                continue;
-                            case RssElementNames.TimeToLive:
-                                podcast.Ttl = await feedReader.ReadValue<int>();
-                                continue;
-                            case RssElementNames.Generator:
-                                podcast.Generator = await feedReader.ReadValue<string>();
-                                continue;
-                            default:
-                                break;
-                        }
-                        switch (feedReader.ElementType)
-                        {
-                            case SyndicationElementType.Image:
-                                if (!foundHighResImage)
-                                {
-                                    ISyndicationImage artworkImage = await feedReader.ReadImage();
-                                    podcast.Artwork.MediaSource = artworkImage.Url;
-                                    await podcast.Artwork.DownloadFileAsync();
-                                }
-                                continue;
-                            case SyndicationElementType.Item:
-                                if (episodeCount == 0 || episodeCount < MaxEpisodes)
-                                {
-                                    podcast.AddEpisodeFromSyndicationContent(await feedReader.ReadContent(), -1);
-                                    episodeCount++;
-                                }
-                                continue;
-                            case SyndicationElementType.Link:
-                                if (!foundLink)
-                                {
-                                    Uri linkUri = CastHelpers.CheckForUri(await feedReader.ReadContent());
-                                    if (linkUri != null)
-                                    {
-                                        podcast.Link = linkUri;
-                                        foundLink = true;
-                                    }
-                                }
-                                continue;
-                            default:
-                                break;
-                        }
+                                podcast.LastBuildDate = buildDate;
+                            }
+                            continue;
+                        case RssElementNames.Author:
+                            podcast.Author = await feedReader.ReadValue<string>();
+                            continue;
+                        case RssElementNames.TimeToLive:
+                            podcast.Ttl = await feedReader.ReadValue<int>();
+                            continue;
+                        case RssElementNames.Generator:
+                            podcast.Generator = await feedReader.ReadValue<string>();
+                            continue;
+                        default:
+                            break;
                     }
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
+                    switch (feedReader.ElementType)
+                    {
+                        case SyndicationElementType.Image:
+                            if (!foundHighResImage)
+                            {
+                                ISyndicationImage artworkImage = await feedReader.ReadImage();
+                                podcast.Artwork.MediaSource = artworkImage.Url;
+                                await podcast.Artwork.DownloadFileAsync();
+                            }
+                            continue;
+                        case SyndicationElementType.Item:
+                            if (episodeCount == 0 || episodeCount < MaxEpisodes)
+                            {
+                                podcast.AddEpisodeFromSyndicationContent(await feedReader.ReadContent(), -1);
+                                episodeCount++;
+                            }
+                            continue;
+                        case SyndicationElementType.Link:
+                            if (!foundLink)
+                            {
+                                Uri linkUri = CastHelpers.CheckForUri(await feedReader.ReadContent());
+                                if (linkUri != null)
+                                {
+                                    podcast.Link = linkUri;
+                                    foundLink = true;
+                                }
+                            }
+                            continue;
+                        default:
+                            break;
+                    }
                 }
             }
             return podcast;

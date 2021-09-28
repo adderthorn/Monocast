@@ -12,7 +12,7 @@ namespace Monosoftware.Podcast
     /// <summary>
     /// Represents a single episode of a podcast
     /// </summary>
-    [DataContract(IsReference = true)]
+    [DataContract(IsReference = true, Namespace = "http://www.monocast.co/Monosoftware.Podcast")]
     public class Episode : IDisposable, IDownloadable, INotifyPropertyChanged
     {
         #region Private Variables
