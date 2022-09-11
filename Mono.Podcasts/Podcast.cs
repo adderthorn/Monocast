@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Net.Http.Headers;
 
 namespace Monosoftware.Podcast
 {
@@ -92,6 +93,7 @@ namespace Monosoftware.Podcast
         private uint _SortOrder;
         private string _Guid;
         private ObservableCollection<Episode> _Episodes;
+        private string _Authentication;
         #endregion
 
         #region Public Properties
@@ -398,6 +400,20 @@ namespace Monosoftware.Podcast
             }
         }
 
+        [DataMember]
+        public string Authentication
+        {
+            get => _Authentication;
+            set
+            {
+                if (value != _Authentication)
+                {
+                    _Authentication = value;
+                    raisePropertyChanged(nameof(Authentication));
+                }
+            }
+        }
+
         /// <summary>
         /// A count of the number of episodes currently saved with this podcast.
         /// </summary>
@@ -424,9 +440,15 @@ namespace Monosoftware.Podcast
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add(CastHelpers.USER_AGENT_TEXT, CastHelpers.UserAgent);
             var request = new HttpRequestMessage(HttpMethod.Get, FeedUri);
+            if (!string.IsNullOrEmpty(Authentication))
+            {
+                request.Headers.Authorization = new AuthenticationHeaderValue("Basic", Authentication);
+            }
             var responseMessage = await httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead);
             RssFeedReader feed;
             int episodeCount = 0;
+            // TODO: Add method to re-check for artwork
+            //bool needsArtwork = this.Artwork?.MediaSource == null;
             using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
             {
                 using (var reader = XmlReader.Create(responseStream, new XmlReaderSettings() { Async = true, DtdProcessing = DtdProcessing.Ignore }))
@@ -591,6 +613,25 @@ namespace Monosoftware.Podcast
             var responseMessage = await httpClient.SendAsync(httpRequest, HttpCompletionOption.ResponseContentRead);
             Stream s = await responseMessage.Content.ReadAsStreamAsync();
             return await GetPodcastFromStreamAsync(s, MaxEpisodes, FeedUri);
+        }
+
+        public static async Task<Podcast> GetPodcastAsync(Uri FeedUri, int MaxEpisodes, string Username, string Password)
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Add(CastHelpers.USER_AGENT_TEXT, CastHelpers.UserAgent);
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, FeedUri);
+            var encodedAuth = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", Username, Password)));
+            var authHeader = new AuthenticationHeaderValue("Basic", encodedAuth);
+            httpRequest.Headers.Authorization = authHeader;
+            var responseMessage = await httpClient.SendAsync(httpRequest, HttpCompletionOption.ResponseContentRead);
+            Stream s = await responseMessage.Content.ReadAsStreamAsync();
+            using (var reader = new StreamReader(s))
+            {
+                Debug.Write(reader.ReadToEnd());
+            }
+                var podcast = await GetPodcastFromStreamAsync(s, MaxEpisodes, FeedUri);
+            podcast.Authentication = encodedAuth;
+            return podcast;
         }
 
         /// <summary>

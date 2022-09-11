@@ -30,7 +30,7 @@
             </Storyboard>
         </Grid.Resources>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="30"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>

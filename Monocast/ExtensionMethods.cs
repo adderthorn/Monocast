@@ -40,6 +40,12 @@ namespace Monocast
         #region Subscriptions
         public static async Task RefreshPodcastArtworkAsync(this Subscriptions subscriptions, bool ForceUpdate = false)
         {
+            foreach (var podcast in subscriptions.Podcasts.Where(p => p.Artwork == null))
+            {
+                podcast.Artwork = new ArtworkInfo();
+                podcast.Artwork.SetStream(getDefaultArtworkImageStream());
+            }
+
             var podcastList = new List<Podcast>();
             if (ForceUpdate)
             {
@@ -49,7 +55,8 @@ namespace Monocast
             {
                 podcastList = subscriptions.Podcasts.Where(p => Math.Abs((DateTime.Now - p.Artwork.LastCacheTime).Days) > 7).ToList();
             }
-            foreach (var item in podcastList.Select(p => new { Title = p.Title, Artwork = p.Artwork }))
+
+            foreach (var item in podcastList.Where(p => p.Artwork.MediaSource != null).Select(p => new { Title = p.Title, Artwork = p.Artwork }))
             {
                 if (!string.IsNullOrEmpty(item.Artwork.LocalArtworkPath))
                 {
@@ -69,15 +76,13 @@ namespace Monocast
         public static async Task GetLocalImagesAsync(this Subscriptions subscriptions)
         {
             var podcastList = subscriptions.Podcasts;
-            foreach (var podcast in podcastList)
+            foreach (var podcast in podcastList.Where(p => p.Artwork != null))
             {
                 AppData appData = new AppData(podcast.Artwork.LocalArtworkPath, FolderLocation.Local);
                 Stream imgStream;
                 if (!appData.CheckFileExists() && podcast.Artwork.MediaSource == null)
                 {
-                    var assembly = typeof(Monocast.Program).GetTypeInfo().Assembly;
-                    const string fileName = "Monocast.Resources.placeholder_image.bmp";
-                    imgStream = assembly.GetManifestResourceStream(fileName);
+                    imgStream = getDefaultArtworkImageStream();
                 }
                 else if (!appData.CheckFileExists() && podcast.Artwork.MediaSource != null)
                 {
@@ -90,14 +95,20 @@ namespace Monocast
                 }
                 if (imgStream == null)
                 {
-                    var assembly = typeof(Monocast.Program).GetTypeInfo().Assembly;
-                    const string fileName = "Monocast.Resources.placeholder_image.bmp";
-                    imgStream = assembly.GetManifestResourceStream(fileName);
+                    imgStream = getDefaultArtworkImageStream();
                 }
                 imgStream.Seek(0, SeekOrigin.Begin);
                 podcast.Artwork.SetStream(imgStream);
                 imgStream.Dispose();
             }
+        }
+
+        private static Stream getDefaultArtworkImageStream()
+        {
+            const string fileName = "Monocast.Resources.placeholder_image.bmp";
+            var assembly = typeof(Monocast.Program).GetTypeInfo().Assembly;
+            var imgStream = assembly.GetManifestResourceStream(fileName);
+            return imgStream;
         }
         #endregion
 
@@ -110,6 +121,7 @@ namespace Monocast
 
         public static string GetAbsoluteFileName(this Uri uri)
         {
+            if (uri == null) return string.Empty;
             string uriPath = uri.AbsolutePath;
             if (!Uri.TryCreate(uriPath, UriKind.Absolute, out Uri newUri))
                 newUri = new Uri(uri, uriPath);
@@ -145,6 +157,7 @@ namespace Monocast
         #region ArtworkInfo
         public static Uri GetBestArtworkSoruce(this ArtworkInfo artworkInfo)
         {
+            if (artworkInfo == null) return null;
             Uri uri = artworkInfo.MediaSource;
             if (!string.IsNullOrEmpty(artworkInfo.LocalArtworkPath))
             {

@@ -32,8 +32,8 @@ namespace Monocast.Controls
                         nameof(PinnedVisiblity),
                         nameof(UnreadVisibility),
                         nameof(ProgressBarVisibility));
-                    int from = value ? -32 : 0;
-                    int to = value ? 0 : -32;
+                    int from = value ? -40 : 0;
+                    int to = value ? 0 : -40;
                     EaseIn.Children[0].SetValue(DoubleAnimation.FromProperty, from);
                     EaseIn.Children[0].SetValue(DoubleAnimation.ToProperty, to);
                     EaseIn.Begin();

@@ -234,7 +234,7 @@ namespace Monocast.Views
         {
             var point = e.GetPosition(MainMPE);
             // 48 = CommandBar size + 60 for extra padding
-            double maxY = Window.Current.Bounds.Height - 48 - 60;
+            double maxY = MainMPE.ActualSize.Y - 48 - 60;
             if (point.Y < maxY)
             {
                 PlayerViewModel.TogglePlayPause();
@@ -253,7 +253,6 @@ namespace Monocast.Views
                     {
                         ActiveEpisode.Duration = PlayerViewModel.TotalDuration;
                     }
-
                     break;
                 case MediaPlaybackState.Paused:
                     PlayPauseSymbol = Symbol.Pause;

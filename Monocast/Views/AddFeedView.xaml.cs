@@ -87,15 +87,22 @@ namespace Monocast.Views
             try
             {
                 var uriStatus = await CastHelpers.CheckUriValidAsync(FeedUri);
-                if (uriStatus.UriStatus == UriStatus.Valid)
-                {
-                    StatusText = "Fetching Podcast Information...";
-                    podcast = await Podcast.GetPodcastAsync(FeedUri);
-                    StatusText = "Adding Podcast...";
-                    Subscriptions.AddPodcast(podcast);
-                }
                 switch (uriStatus.UriStatus)
                 {
+                    case UriStatus.Redirect:
+                        StatusText = "Fetching Podcast Information...";
+                        var uri = new Uri(FeedUri);
+                        uri = await CastHelpers.ResolveUriRedirectsAsync(uri);
+                        podcast = await Podcast.GetPodcastAsync(uri);
+                        StatusText = "Adding Podcast...";
+                        Subscriptions.AddPodcast(podcast);
+                        break;
+                    case UriStatus.Valid:
+                        StatusText = "Fetching Podcast Information...";
+                        podcast = await Podcast.GetPodcastAsync(FeedUri);
+                        StatusText = "Adding Podcast...";
+                        Subscriptions.AddPodcast(podcast);
+                        break;
                     case UriStatus.Malformed:
                         StatusText = "The feed entered does not appear to be a valid URL.";
                         return;
@@ -117,8 +124,8 @@ namespace Monocast.Views
             if (App.Settings.CachePodcastArtwork && podcast != null)
             {
                 StatusText = "Fetching Artwork...";
-                if (!podcast.Artwork?.IsDownloaded == true) await podcast.Artwork.DownloadFileAsync();
-                podcast.Artwork.SaveToFile(podcast.Title);
+                if (podcast.Artwork?.IsDownloaded == false) await podcast.Artwork.DownloadFileAsync();
+                if (podcast.Artwork?.MediaBytes != null) podcast.Artwork.SaveToFile(podcast.Title);
             }
 
             StatusText = "Saving Subscriptions";

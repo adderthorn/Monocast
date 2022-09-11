@@ -213,7 +213,7 @@ namespace Monocast.Views
             //    episodeList = episodeList.Where(e => !e.Episode.IsArchived).ToList();
             //}
             //EpisodeListView.ItemsSource = episodeList;
-            if (Podcast.Artwork.IsDownloaded)
+            if (Podcast.Artwork?.IsDownloaded == true)
             {
                 var artworkImage = new BitmapImage();
                 Stream temp = Podcast.Artwork.GetStream();
@@ -478,6 +478,7 @@ namespace Monocast.Views
         {
             AnalyticsVersionInfo analyticsVersionInfo = AnalyticsInfo.VersionInfo;
             EpisodeListItem clickedEpisodeListItem = (EpisodeListItem)EpisodeListView.SelectedItem;
+            if (clickedEpisodeListItem == null) return;
             setEpisode(clickedEpisodeListItem.Episode);
             EpisodeTitle = clickedEpisodeListItem.Episode.Title;
             if (analyticsVersionInfo.DeviceFamily == MOBILE_DEVICE_FAMILY)

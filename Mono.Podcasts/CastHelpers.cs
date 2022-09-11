@@ -68,6 +68,27 @@ namespace Monosoftware.Podcast
             return responseContent;
         }
 
+        public static async Task<Uri> ResolveUriRedirectsAsync(Uri uri)
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Add(USER_AGENT_TEXT, _UserAgent);
+            var response = await resolveAsync(httpClient, uri);
+            int code = (int)response.StatusCode;
+            while (code >= 300 && code < 400)
+            {
+                uri = response.Headers.Location;
+                response = await resolveAsync(httpClient, uri);
+                code = (int)response.StatusCode;
+            }
+            return uri;
+        }
+
+        private static async Task<HttpResponseMessage> resolveAsync(HttpClient client, Uri uri)
+        {
+            var response = await client.GetAsync(uri);
+            return response;
+        }
+
         /// <summary>
         /// Checks that the Uri string value is a valid HTTP URI that does not return an HTTP error code;
         /// i.e. the status code must be less greater than 199 or less than 300.
@@ -88,7 +109,15 @@ namespace Monosoftware.Podcast
                 HttpClient request = new HttpClient();
                 request.DefaultRequestHeaders.Add(USER_AGENT_TEXT, _UserAgent);
                 HttpResponseMessage response = await request.GetAsync(UriToTest);
-                if ((int)response.StatusCode < 200 || (int)response.StatusCode >= 300)
+                if ((int)response.StatusCode == 403)
+                {
+                    return new UriStatusInfo(UriStatus.Unauthorized, response.StatusCode);
+                }
+                if ((int)response.StatusCode >= 300 && (int)response.StatusCode < 400)
+                {
+                    return new UriStatusInfo(UriStatus.Redirect, response.StatusCode);
+                }
+                if ((int)response.StatusCode < 200 || (int)response.StatusCode >= 400)
                 {
                     return new UriStatusInfo(UriStatus.HttpError, response.StatusCode);
                 }
