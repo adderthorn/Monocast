@@ -2,6 +2,7 @@
 using Windows.Storage;
 using System.Runtime.Serialization;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Monocast
 {
@@ -179,12 +180,20 @@ namespace Monocast
 
         private T getSetting<T>(string settingName, T defaultValue)
         {
-            Object obj = roamingSettings.Values[settingName];
-            if (obj == null || obj.GetType() != typeof(T))
+            try
             {
+                Object obj = roamingSettings.Values[settingName];
+                if (obj == null || obj.GetType() != typeof(T))
+                {
+                    return defaultValue;
+                }
+                return (T)obj;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
                 return defaultValue;
             }
-            return (T)obj;
         }
         #endregion
     }

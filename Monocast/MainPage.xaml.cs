@@ -182,9 +182,9 @@ namespace Monocast
                     }
                     catch (SerializationException ex)
                     {
-                        if (ex.Message.Contains(VersionConverter.OLD_NAMESPACE))
+                        MemoryStream stream = await appData.LoadFromFileAsync();
+                        if (ex.Message.Contains(VersionConverter.OLD_NAMESPACE) && stream != Stream.Null)
                         {
-                            MemoryStream stream = await appData.LoadFromFileAsync();
                             stream.Seek(0, SeekOrigin.Begin);
                             VersionConverter versionConverter = new VersionConverter();
                             await versionConverter.LoadAsync(stream);

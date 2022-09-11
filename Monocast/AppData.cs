@@ -70,51 +70,63 @@ namespace Monocast
 
         public async Task<T> DeserializeFromFileAsync<T>()
         {
-            object obj;
-            DataContractSerializer serializer = new DataContractSerializer(typeof(T));
-            var getStreamResult = await GetStreamFromFileAsync(CreationCollisionOption.OpenIfExists);
-            using (IRandomAccessStream stream = getStreamResult.Stream)
+            try
             {
-                using (var reader = XmlReader.Create(stream.AsStream()))
+                object obj;
+                DataContractSerializer serializer = new DataContractSerializer(typeof(T));
+                var getStreamResult = await GetStreamFromFileAsync(CreationCollisionOption.OpenIfExists);
+                using (IRandomAccessStream stream = getStreamResult.Stream)
                 {
-                    obj = (T)serializer.ReadObject(reader);
+                    using (var reader = XmlReader.Create(stream.AsStream()))
+                    {
+                        obj = (T)serializer.ReadObject(reader);
+                    }
                 }
+                return (T)obj;
             }
-            return (T)obj;
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                return default;
+            }
         }
 
         public async Task<string> SaveToFileAsync(byte[] bytes, CreationCollisionOption collisionOption,
             Action<uint> ProgressCallbackFunction)
         {
-            bool isComplete = false;
             Progress<uint> progressCallback = new Progress<uint>(ProgressCallbackFunction);
             var getStreamResult = await CreateStreamFromFileAsync(collisionOption);
             var stream = getStreamResult.Stream;
             var tokenSource = new CancellationTokenSource();
-            uint value = await stream.WriteAsync(bytes.AsBuffer()).AsTask(tokenSource.Token, progressCallback);
-
-            isComplete = await stream.FlushAsync();
-
+            await stream.WriteAsync(bytes.AsBuffer()).AsTask(tokenSource.Token, progressCallback);
+            await stream.FlushAsync();
             return getStreamResult.File;
         }
 
         public async Task<string> SaveToFileAsync(byte[] bytes, CreationCollisionOption collisionOption)
         {
-            bool isComplete = false;
             var getStreamResult = await CreateStreamFromFileAsync(collisionOption);
             var stream = getStreamResult.Stream;
             await stream.WriteAsync(bytes.AsBuffer());
-            isComplete = await stream.FlushAsync();
+            await stream.FlushAsync();
             return getStreamResult.File;
         }
 
         public async Task<MemoryStream> LoadFromFileAsync()
         {
-            var getStreamResult = await GetStreamFromFileAsync(CreationCollisionOption.OpenIfExists);
-            var stream = getStreamResult.Stream;
-            MemoryStream resultStream = new MemoryStream();
-            stream.AsStreamForRead().CopyTo(resultStream);
-            return resultStream;
+            try
+            {
+                var getStreamResult = await GetStreamFromFileAsync(CreationCollisionOption.OpenIfExists);
+                var stream = getStreamResult.Stream;
+                MemoryStream resultStream = new MemoryStream();
+                stream.AsStreamForRead().CopyTo(resultStream);
+                return resultStream;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                return (MemoryStream)Stream.Null;
+            }
         }
 
         public bool CheckFileExists()
