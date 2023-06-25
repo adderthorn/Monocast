@@ -5,7 +5,7 @@
     xmlns:local="using:Monocast.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
     d:DesignHeight="30"
     d:DesignWidth="200">
@@ -47,9 +47,9 @@
         <SymbolIcon Symbol="Pin" Grid.Column="0" Grid.Row="0" Margin="0" Visibility="{x:Bind PinnedVisiblity, Mode=OneWay}"/>
         <Ellipse Height="8" Width="8" Margin="8,0" Fill="{ThemeResource SystemAccentColor}" Grid.Column="0" Grid.Row="0" Visibility="{x:Bind UnreadVisibility, Mode=OneWay}"
                  VerticalAlignment="Center"/>
-        <controls:RadialProgressBar Grid.Column="0" Grid.Row="0" Margin="2" Minimum="0" Maximum="100" Width="20" Height="20"
+        <controls:ProgressRing Grid.Column="0" Grid.Row="0" Margin="2" Minimum="0" Maximum="100" Width="20" Height="20"
                                     Value="{x:Bind CompletedPct, Mode=OneWay}" Visibility="{x:Bind ProgressBarVisibility, Mode=OneWay}"
-                                    VerticalAlignment="Center"/>
+                                    VerticalAlignment="Center" IsIndeterminate="False"/>
         <TextBlock Text="{x:Bind TruncatedEpisodeTitle}" Margin="10,0,0,0" Grid.Row="0" Grid.Column="1" ToolTipService.ToolTip="{x:Bind Episode.Title}" VerticalAlignment="Center"
                    Foreground="{x:Bind TextColor, Mode=OneWay}"/>
         <!--<ProgressBar Grid.Column="2" Grid.Row="1" Value="{x:Bind CompletedPct, Mode=OneWay}" Visibility="{x:Bind ProgressBarVisibility, Mode=OneWay}"/>-->

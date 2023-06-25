@@ -125,7 +125,7 @@ namespace Monocast
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                return (MemoryStream)Stream.Null;
+                return null;
             }
         }
 

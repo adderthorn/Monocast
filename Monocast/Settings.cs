@@ -21,6 +21,7 @@ namespace Monocast
         private const bool cachePodcastArtwork_DEFAULT = true;
         private const bool showArchived_DEFAULT = true;
         private const bool sortPodcastsByName_DEFAULT = false;
+        private const bool keepEpisodeSelectionAfterAction_DEFAULT = false;
 
         private bool _SyncOnLaunch;
         private int _EpisodesToKeep;
@@ -31,6 +32,7 @@ namespace Monocast
         private bool _ShowArchived = true;
         private bool _SortPodcastsByName;
         private string _DownloadFolderToken;
+        private bool _keepEpisodeSelectionAfterAction;
         #endregion
 
         #region Public Properties
@@ -153,6 +155,20 @@ namespace Monocast
                 }
             }
         }
+
+        public bool KeepEpisodeSelectionAfterAction
+        {
+            get => _keepEpisodeSelectionAfterAction;
+            set
+            {
+                if (_keepEpisodeSelectionAfterAction != value)
+                {
+                    _keepEpisodeSelectionAfterAction = value;
+                    RaisePropertyChanged(nameof(KeepEpisodeSelectionAfterAction));
+                    roamingSettings.Values[nameof(KeepEpisodeSelectionAfterAction)] = value;
+                }
+            }
+        }
         #endregion
 
         #region Constructors & Static Methods
@@ -172,6 +188,7 @@ namespace Monocast
             CachePodcastArtwork = getSetting(nameof(CachePodcastArtwork), cachePodcastArtwork_DEFAULT);
             SortPodcastsByName = getSetting(nameof(SortPodcastsByName), sortPodcastsByName_DEFAULT);
             DownloadFolderToken = getSetting(nameof(DownloadFolderToken), string.Empty);
+            KeepEpisodeSelectionAfterAction = getSetting(nameof(KeepEpisodeSelectionAfterAction), keepEpisodeSelectionAfterAction_DEFAULT);
         }
         #endregion
 

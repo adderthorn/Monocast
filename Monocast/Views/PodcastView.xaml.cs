@@ -403,8 +403,11 @@ namespace Monocast.Views
                 {
                     MarkEpisodeAsPlayed(item, e);
                 }
-                EpisodesAllCheckBox.IsChecked = false;
-                SelectionToggleButton.IsChecked = false;
+                if (!App.Settings.KeepEpisodeSelectionAfterAction)
+                {
+                    EpisodesAllCheckBox.IsChecked = false;
+                    SelectionToggleButton.IsChecked = false;
+                }
             }
             else
             {
@@ -420,8 +423,11 @@ namespace Monocast.Views
                 {
                     ToggleMarkEpisodeArchived(item, e);
                 }
-                EpisodesAllCheckBox.IsChecked = false;
-                SelectionToggleButton.IsChecked = false;
+                if (!App.Settings.KeepEpisodeSelectionAfterAction)
+                {
+                    EpisodesAllCheckBox.IsChecked = false;
+                    SelectionToggleButton.IsChecked = false;
+                }
             }
             else
             {
@@ -437,8 +443,11 @@ namespace Monocast.Views
                 {
                     PinEpisode(item, e);
                 }
-                EpisodesAllCheckBox.IsChecked = false;
-                SelectionToggleButton.IsChecked = false;
+                if (!App.Settings.KeepEpisodeSelectionAfterAction)
+                {
+                    EpisodesAllCheckBox.IsChecked = false;
+                    SelectionToggleButton.IsChecked = false;
+                }
             }
             else
             {

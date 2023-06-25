@@ -188,7 +188,7 @@
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="Download"/>
-                        <TextBlock Text="Download"/>
+                        <TextBlock Margin="5,0,0,0" Text="Download"/>
                     </StackPanel>
                 </Button.Content>
             </Button>
@@ -199,7 +199,18 @@
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="Play"/>
-                        <TextBlock Text="Play"/>
+                        <TextBlock Margin="5,0,0,0" Text="Play"/>
+                    </StackPanel>
+                </Button.Content>
+            </Button>
+            <Button x:Name="DetailsButton" Margin="10,0,0,20"
+                    HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="DetailsButton_Click"
+                    RelativePanel.AlignBottomWith="DownloadButton" RelativePanel.RightOf="EpisodeButton"
+                    IsEnabled="{Binding ElementName=DownloadButton, Path=IsEnabled}">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="PreviewLink"/>
+                        <TextBlock Margin="5,0,0,0" Text="Details"/>
                     </StackPanel>
                 </Button.Content>
             </Button>

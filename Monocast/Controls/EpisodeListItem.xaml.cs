@@ -72,6 +72,7 @@ namespace Monocast.Controls
             (Episode.PlaybackPositionLong > 0
             && Episode.PlaybackPositionLong != Episode.DurationLong
             && !Episode.IsPlayed
+            && !Episode.IsArchived
             && !CanSelect) ? Visibility.Visible : Visibility.Collapsed;
 
         private Visibility UnreadVisibility =>

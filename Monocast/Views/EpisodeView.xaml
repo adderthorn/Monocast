@@ -85,19 +85,19 @@
                         RelativePanel.RightOf="ArtworkContainer"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom">
-                <Button x:Name="PlayButton" Margin="10,0" Click="PlayButton_Click">
+                <Button x:Name="DownloadButton" Margin="5,0" Click="DownloadButton_Click">
                     <Button.Content>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Play"/>
-                            <SymbolIcon Symbol="Play"/>
+                            <SymbolIcon Symbol="Download"/>
+                            <TextBlock Margin="5,0,0,0" Text="Download"/>
                         </StackPanel>
                     </Button.Content>
                 </Button>
-                <Button x:Name="DownloadButton" Margin="10,0" Click="DownloadButton_Click">
+                <Button x:Name="PlayButton" Margin="5,0" Click="PlayButton_Click">
                     <Button.Content>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Download"/>
-                            <SymbolIcon Symbol="Download"/>
+                            <SymbolIcon Symbol="Play"/>
+                            <TextBlock Margin="5,0,0,0" Text="Play"/>
                         </StackPanel>
                     </Button.Content>
                 </Button>

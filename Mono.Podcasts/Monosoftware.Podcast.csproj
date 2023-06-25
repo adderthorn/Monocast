@@ -27,4 +27,12 @@
     <ProjectReference Include="..\..\SyndicationFeedReaderWriter\src\Microsoft.SyndicationFeed.ReaderWriter.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="D:\source\Monocast\Mono.Podcasts\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="D:\source\Monocast\Mono.Podcasts\.editorconfig" />
+  </ItemGroup>
+
 </Project>

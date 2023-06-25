@@ -30,7 +30,8 @@
                     <TextBox x:Name="SkipBackTextBox" Width="100" TextAlignment="Right" InputScope="Number" Text="{x:Bind Settings.SkipBackTime, Mode=TwoWay}"/>
                     <TextBlock Text="seconds" Margin="5,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 </StackPanel>
-                <TextBlock Margin="10,10,10,0" Text="New Episodes To Download" />
+                <TextBlock Margin="10,10,10,0" Text="Keep Episode Selection After Action"/>
+                <ToggleSwitch x:Name="KeepEpisodeSelectionAfterActionToggle" Margin="10,0" IsOn="{x:Bind Settings.KeepEpisodeSelectionAfterAction, Mode=TwoWay}"/>
                 <Button Content="Export OPML" Margin="10,10,10,0" IsEnabled="{x:Bind HasSubscriptions}" Click="ExportOpmlButton_Click"/>
                 <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="About" Margin="10"/>
                 <RichTextBlock Margin="10">
