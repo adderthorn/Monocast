@@ -17,6 +17,8 @@
                 <ToggleSwitch x:Name="CacheArtworkToggle" Margin="10,0" IsOn="{x:Bind Settings.CachePodcastArtwork, Mode=TwoWay}"/>
                 <TextBlock Margin="10,10,10,0" Text="Use Episode Artwork:"/>
                 <ToggleSwitch x:Name="EpisodeArtworkToggle" Margin="10,0" IsOn="{x:Bind Settings.UseEpisodeArtwork, Mode=TwoWay}"/>
+                <TextBlock Margin="10,10,10,0" Text="Show Archived Episodes:"/>
+                <ToggleSwitch x:Name="ShowArchivedToggle" Margin="10,0" IsOn="{x:Bind Settings.ShowArchived, Mode=TwoWay}"/>
                 <TextBlock Margin="10,10,10,0" Text="Episodes To Keep:"/>
                 <TextBox Text="{x:Bind Settings.EpisodesToKeep, Mode=TwoWay}" Width="100" InputScope="Number" Margin="10"
                      HorizontalAlignment="Left" TextAlignment="Right"/>

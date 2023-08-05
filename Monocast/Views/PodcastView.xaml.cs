@@ -29,9 +29,9 @@ namespace Monocast.Views
     /// </summary>
     public sealed partial class PodcastView : Page, INotifyPropertyChanged
     {
-        private const double MAX_WIDTH = 100;
-        private const int WAIT_TIME = 3000;
-        private const int MAX_TITLE_WIDTH = 30;
+        //private const double MAX_WIDTH = 100;
+        //private const int WAIT_TIME = 3000;
+        //private const int MAX_TITLE_WIDTH = 30;
         private const string MOBILE_DEVICE_FAMILY = "Windows.Mobile";
         private const string PUBLISHED_STRING = "Published: ";
 
@@ -41,7 +41,7 @@ namespace Monocast.Views
         private string _Title;
         private string _EpisodeTitle;
         private Visibility _PublishedVisibility = Visibility.Collapsed;
-        private List<EpisodeListItem> allEpisodeItems;
+        private readonly List<EpisodeListItem> allEpisodeItems;
         private Visibility _EpisodesCheckBoxVisibility = Visibility.Collapsed;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -161,7 +161,7 @@ namespace Monocast.Views
             if (e.Parameter is Podcast)
             {
                 Podcast = (Podcast)e.Parameter;
-                if (!MainPage.Current.IsCurrentEpisodeAvailable || App.Subscriptions.ActiveEpisode.Podcast != Podcast)
+                if (!MainPage.Current.IsCurrentEpisodeAvailable || App.Subscriptions.ActiveEpisode?.Podcast != Podcast)
                     setEpisode(Podcast.Episodes.FirstOrDefault(), forceSelect: true);
             }
             else if (e.Parameter is Episode)
@@ -289,6 +289,11 @@ namespace Monocast.Views
                 EpisodeListItem item = sender as EpisodeListItem;
                 item.Episode.IsArchived = !item.Episode.IsArchived;
                 item.EpisodeUpdated();
+                if (!ShowArchived)
+                {
+                    if (SelectedEpisodeListItem == item) setEpisode(null);
+                    EpisodeListItems.Remove(item);
+                }
             }
         }
 

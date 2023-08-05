@@ -210,6 +210,8 @@ namespace Monocast
                 }
             }
             itemToNavigateTo.IsSelected = true;
+            // this fixes a bug where if in compact mode the header is mashed together with the nav items on launch.
+            NavView.PaneDisplayMode = NavigationViewPaneDisplayMode.Auto;
             if (Settings.SyncOnLaunch) SyncButton_Click(new object(), new TappedRoutedEventArgs());
             if (Subscriptions.Podcasts.Count > 0 && Settings.CachePodcastArtwork) await Subscriptions.RefreshPodcastArtworkAsync();
             await Subscriptions.GetLocalImagesAsync();
