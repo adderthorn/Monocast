@@ -10,7 +10,7 @@ namespace Monocast
     public class Settings : INotifyPropertyChanged
     {
         #region Private Variables
-        private ApplicationDataContainer roamingSettings = null;
+        private readonly ApplicationDataContainer roamingSettings;
 
         // Defaults
         private const bool syncOnLaunch_DEFAULT = false;
@@ -123,7 +123,7 @@ namespace Monocast
                 {
                     _ShowArchived = value;
                     RaisePropertyChanged(nameof(ShowArchived));
-                    roamingSettings.Values[nameof(Version)] = value;
+                    roamingSettings.Values[nameof(ShowArchived)] = value;
                 }
             }
         }
@@ -186,6 +186,7 @@ namespace Monocast
             SkipBackTime = getSetting(nameof(SkipBackTime), skipBackTime_DEFAULT);
             UseEpisodeArtwork = getSetting(nameof(UseEpisodeArtwork), useEpisodeArtwork_DEFAULT);
             CachePodcastArtwork = getSetting(nameof(CachePodcastArtwork), cachePodcastArtwork_DEFAULT);
+            ShowArchived = getSetting(nameof(ShowArchived), showArchived_DEFAULT);
             SortPodcastsByName = getSetting(nameof(SortPodcastsByName), sortPodcastsByName_DEFAULT);
             DownloadFolderToken = getSetting(nameof(DownloadFolderToken), string.Empty);
             KeepEpisodeSelectionAfterAction = getSetting(nameof(KeepEpisodeSelectionAfterAction), keepEpisodeSelectionAfterAction_DEFAULT);
