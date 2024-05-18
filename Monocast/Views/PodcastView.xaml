@@ -179,8 +179,9 @@
                           ScrollViewer.VerticalScrollBarVisibility="Visible"
                           ScrollViewer.VerticalScrollMode="Enabled" VerticalAlignment="Stretch"
                           ItemsSource="{x:Bind EpisodeListItems, Mode=OneWay}">
-                    <ListViewItem>Placeholder That is longer than normal</ListViewItem>
                 </ListView>
+                <TextBlock Grid.Row="1" HorizontalAlignment="Center" Margin="0,20" Text="All Caught Up!" FontWeight="Bold"
+                           Visibility="{x:Bind CaughtUpVisible, Mode=OneWay}"/>
             </Grid>
             <Button x:Name="DownloadButton" Margin="10,0,0,20" HorizontalAlignment="Center" VerticalAlignment="Bottom"
                     Click="DownloadButton_Click" RelativePanel.AlignBottomWithPanel="True"

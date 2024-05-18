@@ -148,10 +148,18 @@ namespace Monocast.Views
             }
         }
 
+        private Visibility CaughtUpVisible => EpisodeListItems.Count == 0
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+
         public ObservableCollection<EpisodeListItem> EpisodeListItems { get; set; }
         public PodcastView()
         {
             EpisodeListItems = new ObservableCollection<EpisodeListItem>();
+            EpisodeListItems.CollectionChanged += (s, e) =>
+            {
+                RaisePropertyChanged(nameof(CaughtUpVisible));
+            };
             allEpisodeItems = new List<EpisodeListItem>();
             this.InitializeComponent();
         }
@@ -204,7 +212,17 @@ namespace Monocast.Views
                             new Windows.UI.Xaml.Media.Animation.DrillInNavigationTransitionInfo());
                     }
                 };
-                EpisodeListItems.Add(episodeListItem);
+                if (!App.Settings.ShowArchived)
+                {
+                    if (!episodeListItem.Episode.IsArchived)
+                    {
+                        EpisodeListItems.Add(episodeListItem);
+                    }
+                }
+                else
+                {
+                    EpisodeListItems.Add(episodeListItem);
+                }
                 allEpisodeItems.Add(episodeListItem);
             }
             // TODO: I need to make this compatible with toggling
@@ -221,10 +239,7 @@ namespace Monocast.Views
                 await artworkImage.SetSourceAsync(randomAccessStream);
                 //Artwork = artworkImage;
             }
-            if (!App.Settings.ShowArchived)
-            {
-                toggleArchived();
-            }
+            
         }
 
         private void Bmp_ImageOpened(object sender, RoutedEventArgs e)
