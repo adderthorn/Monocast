@@ -172,6 +172,7 @@ namespace Monocast
 
         public async static void SaveToFile(this ArtworkInfo artworkInfo, string FileName)
         {
+            if (artworkInfo.MediaBytes == null) return;
             FileName = FileName.ToSafeWindowsNameString() + Path.GetExtension(artworkInfo.MediaSource.GetAbsoluteFileName());
             var appData = new AppData(FileName, FolderLocation.Local);
             _ = await appData.SaveToFileAsync(artworkInfo.MediaBytes, CreationCollisionOption.ReplaceExisting);
