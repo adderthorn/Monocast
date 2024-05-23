@@ -29,6 +29,10 @@ namespace Monocast
         {
             AppData appData = new AppData(Utilities.SUBSCRIPTION_FILE, FolderLocation.Roaming);
             var subscriptions = await appData.DeserializeFromFileAsync<Subscriptions>();
+            if (subscriptions == null)
+            {
+                throw new SerializationException("File is not valid.");
+            }
             if (subscriptions.Podcasts.FirstOrDefault()?.Episodes.FirstOrDefault().Podcast == null)
             {
                 await Utilities.SaveSubscriptionsAsync(subscriptions);
