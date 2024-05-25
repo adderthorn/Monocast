@@ -175,7 +175,7 @@ namespace Monocast
             if (artworkInfo.MediaBytes == null) return;
             FileName = FileName.ToSafeWindowsNameString() + Path.GetExtension(artworkInfo.MediaSource.GetAbsoluteFileName());
             var appData = new AppData(FileName, FolderLocation.Local);
-            _ = await appData.SaveToFileAsync(artworkInfo.MediaBytes, CreationCollisionOption.ReplaceExisting);
+            _ = await appData.SaveToFileAsync(artworkInfo.MediaBytes, CreationCollisionOption.GenerateUniqueName);
             artworkInfo.LocalArtworkPath = FileName;
         }
         #endregion
