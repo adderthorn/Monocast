@@ -38,7 +38,7 @@
                 <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="About" Margin="10"/>
                 <RichTextBlock Margin="10">
                     <Paragraph>
-                        © Copyright 2017-2020 Noah Wood and Mono Software LLC. All rights reserved. For help and
+                        © Copyright 2017-2024 Noah Wood and Mono Software LLC. All rights reserved. For help and
                     inqurires visit
                         <Hyperlink NavigateUri="http://monocast.co">www.monocast.co</Hyperlink> or email
                         <Hyperlink NavigateUri="mailto:feedback@monocast.co">feedback@monocast.co</Hyperlink> .
