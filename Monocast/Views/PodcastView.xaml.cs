@@ -33,7 +33,6 @@ namespace Monocast.Views
         //private const int WAIT_TIME = 3000;
         //private const int MAX_TITLE_WIDTH = 30;
         private const string MOBILE_DEVICE_FAMILY = "Windows.Mobile";
-        private const string PUBLISHED_STRING = "Published: ";
 
         private bool selectionToggleChecked = false;
         private Podcast _Podcast;
@@ -106,9 +105,13 @@ namespace Monocast.Views
         {
             get
             {
-                if (SelectedEpisode?.PublishDate == null) return PUBLISHED_STRING + Utilities.UNKNOWN;
-                if (SelectedEpisode?.PublishDate == DateTime.MinValue) return PublishedDateString + Utilities.UNKNOWN;
-                return PUBLISHED_STRING + SelectedEpisode?.PublishDate.ToString("D");
+                // Must use UtcDateTime to prevent an exception:
+                // System.ArgumentOutOfRangeException: 'The UTC time represented when the offset is applied must be between year 0 and 10,000.
+                if (SelectedEpisode?.PublishDate == null || SelectedEpisode?.PublishDate.UtcDateTime == DateTime.MinValue)
+                {
+                    return string.Format("Published: {0}", Utilities.UNKNOWN);
+                }
+                return string.Format("Published: {0:D}", SelectedEpisode?.PublishDate);
             }
         }
 
