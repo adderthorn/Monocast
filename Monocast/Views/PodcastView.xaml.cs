@@ -48,7 +48,7 @@ namespace Monocast.Views
         public string Message { get; set; }
         private Episode SelectedEpisode { get; set; }
         public EpisodeListItem SelectedEpisodeListItem => EpisodeListView.SelectedItem as EpisodeListItem;
-        public Visibility PublishedVisibility { get => _PublishedVisibility; }
+        public Visibility PublishedVisibility => _PublishedVisibility;
         public Podcast Podcast
         {
             get => _Podcast;
@@ -245,14 +245,6 @@ namespace Monocast.Views
             
         }
 
-        private void Bmp_ImageOpened(object sender, RoutedEventArgs e)
-        {
-            BitmapImage img = sender as BitmapImage;
-            double aspectRatio = img.PixelWidth;
-            if (aspectRatio == 0) aspectRatio = 1;
-            aspectRatio = img.PixelHeight / aspectRatio;
-        }
-
         private void ProgressCallback(HttpProgress progress)
         {
             if (progress.TotalBytesToReceive == null) return;
@@ -268,14 +260,13 @@ namespace Monocast.Views
                 setEpisode(((EpisodeListItem)sender).Episode);
             }
             if (SelectedEpisode == null) return;
-            StorageFile file = null;
             FileSavePicker picker = new FileSavePicker()
             {
                 SuggestedStartLocation = PickerLocationId.Desktop,
                 SuggestedFileName = SelectedEpisode.Title,
             };
             picker.FileTypeChoices.Add("Audio Files", new List<string>() { ".mp3" });
-            file = await picker.PickSaveFileAsync();
+            var file = await picker.PickSaveFileAsync();
             if (file == null) return;
             var control = new DownloadControl(App.CurrentDownloads, SelectedEpisode, file, Utilities.GetBestArtworkUriForEpisode(SelectedEpisode));
             var controlList = new List<DownloadControl>() { control };
