@@ -433,7 +433,8 @@ namespace Monocast.Views
         {
             if (EpisodesAllCheckBox.IsChecked != false)
             {
-                foreach(EpisodeListItem item in EpisodeListView.Items.Where(el => (el as EpisodeListItem).Selected))
+                var items = EpisodeListView.Items.Where(el => (el as EpisodeListItem).Selected).ToList();
+                foreach (EpisodeListItem item in items)
                 {
                     ToggleMarkEpisodeArchived(item, e);
                 }
