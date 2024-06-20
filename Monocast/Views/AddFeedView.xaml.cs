@@ -79,6 +79,7 @@ namespace Monocast.Views
             RaisePropertyChanged(nameof(FeedUri));
             await SubscribeToFeedAsync();
             SubscribeButton.IsEnabled = true;
+            await Utilities.SaveSubscriptionsAsync(App.Subscriptions);
         }
 
         private async Task SubscribeToFeedAsync()
@@ -203,6 +204,7 @@ namespace Monocast.Views
                     await Subscriptions.RefreshPodcastArtworkAsync(ForceUpdate: true);
                 }
                 StatusText = "Done!";
+                await Utilities.SaveSubscriptionsAsync(App.Subscriptions);
                 await Task.Delay(1000);
                 Frame.Navigate(typeof(SubscriptionView));
             }

@@ -22,7 +22,7 @@ namespace Monocast
             subscriptions.GenerateEpisodeGuids(OverwriteCurrent: false);
             subscriptions.LastModifiedDate = DateTime.Now;
             AppData appData = new AppData(Utilities.SUBSCRIPTION_FILE, FolderLocation.Roaming);
-            await appData.SerializeToFileAsync(subscriptions, CreationCollisionOption.OpenIfExists);
+            await appData.SerializeToFileAsync(subscriptions, CreationCollisionOption.ReplaceExisting);
         }
 
         public static async Task<Subscriptions> LoadSubscriptions()
