@@ -19,7 +19,7 @@ namespace Monocast
 
         public static async Task SaveSubscriptionsAsync(Subscriptions subscriptions)
         {
-            subscriptions.GenerateEpisodeGuids(false);
+            subscriptions.GenerateEpisodeGuids(OverwriteCurrent: false);
             subscriptions.LastModifiedDate = DateTime.Now;
             AppData appData = new AppData(Utilities.SUBSCRIPTION_FILE, FolderLocation.Roaming);
             await appData.SerializeToFileAsync(subscriptions, CreationCollisionOption.ReplaceExisting);
@@ -29,6 +29,10 @@ namespace Monocast
         {
             AppData appData = new AppData(Utilities.SUBSCRIPTION_FILE, FolderLocation.Roaming);
             var subscriptions = await appData.DeserializeFromFileAsync<Subscriptions>();
+            if (subscriptions == null)
+            {
+                throw new SerializationException("File is not valid.");
+            }
             if (subscriptions.Podcasts.FirstOrDefault()?.Episodes.FirstOrDefault().Podcast == null)
             {
                 await Utilities.SaveSubscriptionsAsync(subscriptions);

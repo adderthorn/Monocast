@@ -79,6 +79,7 @@ namespace Monocast.Views
             RaisePropertyChanged(nameof(FeedUri));
             await SubscribeToFeedAsync();
             SubscribeButton.IsEnabled = true;
+            await Utilities.SaveSubscriptionsAsync(App.Subscriptions);
         }
 
         private async Task SubscribeToFeedAsync()
@@ -123,19 +124,31 @@ namespace Monocast.Views
 
             if (App.Settings.CachePodcastArtwork && podcast != null)
             {
-                StatusText = "Fetching Artwork...";
-                if (podcast.Artwork?.IsDownloaded == false) await podcast.Artwork.DownloadFileAsync();
-                if (podcast.Artwork?.MediaBytes != null) podcast.Artwork.SaveToFile(podcast.Title);
+                try
+                {
+                    StatusText = "Fetching Artwork...";
+                    if (podcast.Artwork?.IsDownloaded == false)
+                        await podcast.Artwork.DownloadFileAsync();
+                    if (podcast.Artwork?.MediaBytes != null)
+                        podcast.Artwork.SaveToFile(podcast.Title);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                    var dialog = new MessageDialog(ex.Message, "Error");
+                    await dialog.ShowAsync();
+                }
             }
 
-            StatusText = "Saving Subscriptions";
             try
             {
+                StatusText = "Saving Subscriptions";
                 await Utilities.SaveSubscriptionsAsync(Subscriptions);
             }
             catch (Exception ex)
             {
-                MessageDialog messageDialog = new MessageDialog(ex.Message, "Error");
+                Debug.WriteLine(ex);
+                var messageDialog = new MessageDialog(ex.Message, "Error");
                 await messageDialog.ShowAsync();
                 return;
             }
@@ -191,6 +204,7 @@ namespace Monocast.Views
                     await Subscriptions.RefreshPodcastArtworkAsync(ForceUpdate: true);
                 }
                 StatusText = "Done!";
+                await Utilities.SaveSubscriptionsAsync(App.Subscriptions);
                 await Task.Delay(1000);
                 Frame.Navigate(typeof(SubscriptionView));
             }

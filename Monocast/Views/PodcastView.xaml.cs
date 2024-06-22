@@ -33,7 +33,6 @@ namespace Monocast.Views
         //private const int WAIT_TIME = 3000;
         //private const int MAX_TITLE_WIDTH = 30;
         private const string MOBILE_DEVICE_FAMILY = "Windows.Mobile";
-        private const string PUBLISHED_STRING = "Published: ";
 
         private bool selectionToggleChecked = false;
         private Podcast _Podcast;
@@ -49,7 +48,7 @@ namespace Monocast.Views
         public string Message { get; set; }
         private Episode SelectedEpisode { get; set; }
         public EpisodeListItem SelectedEpisodeListItem => EpisodeListView.SelectedItem as EpisodeListItem;
-        public Visibility PublishedVisibility { get => _PublishedVisibility; }
+        public Visibility PublishedVisibility => _PublishedVisibility;
         public Podcast Podcast
         {
             get => _Podcast;
@@ -106,9 +105,13 @@ namespace Monocast.Views
         {
             get
             {
-                if (SelectedEpisode?.PublishDate == null) return PUBLISHED_STRING + Utilities.UNKNOWN;
-                if (SelectedEpisode?.PublishDate == DateTime.MinValue) return PublishedDateString + Utilities.UNKNOWN;
-                return PUBLISHED_STRING + SelectedEpisode?.PublishDate.ToString("D");
+                // Must use UtcDateTime to prevent an exception:
+                // System.ArgumentOutOfRangeException: 'The UTC time represented when the offset is applied must be between year 0 and 10,000.
+                if (SelectedEpisode?.PublishDate == null || SelectedEpisode?.PublishDate.UtcDateTime == DateTime.MinValue)
+                {
+                    return string.Format("Published: {0}", Utilities.UNKNOWN);
+                }
+                return string.Format("Published: {0:D}", SelectedEpisode?.PublishDate);
             }
         }
 
@@ -242,14 +245,6 @@ namespace Monocast.Views
             
         }
 
-        private void Bmp_ImageOpened(object sender, RoutedEventArgs e)
-        {
-            BitmapImage img = sender as BitmapImage;
-            double aspectRatio = img.PixelWidth;
-            if (aspectRatio == 0) aspectRatio = 1;
-            aspectRatio = img.PixelHeight / aspectRatio;
-        }
-
         private void ProgressCallback(HttpProgress progress)
         {
             if (progress.TotalBytesToReceive == null) return;
@@ -265,14 +260,13 @@ namespace Monocast.Views
                 setEpisode(((EpisodeListItem)sender).Episode);
             }
             if (SelectedEpisode == null) return;
-            StorageFile file = null;
             FileSavePicker picker = new FileSavePicker()
             {
                 SuggestedStartLocation = PickerLocationId.Desktop,
                 SuggestedFileName = SelectedEpisode.Title,
             };
             picker.FileTypeChoices.Add("Audio Files", new List<string>() { ".mp3" });
-            file = await picker.PickSaveFileAsync();
+            var file = await picker.PickSaveFileAsync();
             if (file == null) return;
             var control = new DownloadControl(App.CurrentDownloads, SelectedEpisode, file, Utilities.GetBestArtworkUriForEpisode(SelectedEpisode));
             var controlList = new List<DownloadControl>() { control };
@@ -439,7 +433,8 @@ namespace Monocast.Views
         {
             if (EpisodesAllCheckBox.IsChecked != false)
             {
-                foreach(EpisodeListItem item in EpisodeListView.Items.Where(el => (el as EpisodeListItem).Selected))
+                var items = EpisodeListView.Items.Where(el => (el as EpisodeListItem).Selected).ToList();
+                foreach (EpisodeListItem item in items)
                 {
                     ToggleMarkEpisodeArchived(item, e);
                 }
