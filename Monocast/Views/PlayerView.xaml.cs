@@ -185,38 +185,24 @@ namespace Monocast.Views
             if (ActiveEpisode == null) return;
             var tempBitamp = new BitmapImage();
             Podcast pcast = ActiveEpisode.Podcast;
-            if (ActiveEpisode.Artwork?.IsDownloaded == true)
+            if (App.Settings.UseEpisodeArtwork && ActiveEpisode.HasUniqueArtwork)
             {
-                await tempBitamp.SetSourceAsync(ActiveEpisode.Artwork.GetStream().AsRandomAccessStream());
-                PosterSource = tempBitamp;
+                if (ActiveEpisode.Artwork?.IsDownloaded == true)
+                {
+                    await tempBitamp.SetSourceAsync(ActiveEpisode.Artwork.GetStream().AsRandomAccessStream());
+                    PosterSource = tempBitamp;
+                    return;
+                }
+                PosterSource = await DownloadBitmapAsync(ActiveEpisode.Artwork);
                 return;
             }
-            else if (pcast.Artwork?.IsDownloaded == true)
+            if (pcast.Artwork?.IsDownloaded == true)
             {
                 await tempBitamp.SetSourceAsync(pcast.Artwork.GetStream().AsRandomAccessStream());
                 PosterSource = tempBitamp;
                 return;
             }
-            try
-            {
-                // Don't bother trying if network is down
-                if (!NetworkInterface.GetIsNetworkAvailable()) throw new Exception();
-                await pcast.Artwork.DownloadFileAsync();
-                var s = pcast.Artwork.GetStream();
-                await tempBitamp.SetSourceAsync(s.AsRandomAccessStream());
-            }
-            catch
-            {
-                const string fileName = "Monocast.Resources.placeholder_image.bmp";
-                var assembly = typeof(Monocast.Program).GetTypeInfo().Assembly;
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    await assembly.GetManifestResourceStream(fileName).CopyToAsync(memoryStream);
-                    memoryStream.Seek(0, SeekOrigin.Begin);
-                    await tempBitamp.SetSourceAsync(memoryStream.AsRandomAccessStream());
-                }
-            }
-            PosterSource = tempBitamp;
+            PosterSource = await DownloadBitmapAsync(pcast.Artwork);
         }
 
         private void RaisePropertyChanged(string propertyName) =>
@@ -265,6 +251,32 @@ namespace Monocast.Views
             RaiseNotification.Begin();
             await Task.Delay(4000);
             ExitNotification.Begin();
+        }
+
+        private async Task<BitmapImage> DownloadBitmapAsync(ArtworkInfo artwork)
+        {
+            var tempBitamp = new BitmapImage();
+            try
+            {
+                // Don't bother trying if network is down
+                if (!NetworkInterface.GetIsNetworkAvailable())
+                    throw new Exception("Network is down.");
+                await artwork.DownloadFileAsync();
+                var s = artwork.GetStream();
+                await tempBitamp.SetSourceAsync(s.AsRandomAccessStream());
+            }
+            catch
+            {
+                const string fileName = "Monocast.Resources.placeholder_image.bmp";
+                var assembly = typeof(Monocast.Program).GetTypeInfo().Assembly;
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    await assembly.GetManifestResourceStream(fileName).CopyToAsync(memoryStream);
+                    memoryStream.Seek(0, SeekOrigin.Begin);
+                    await tempBitamp.SetSourceAsync(memoryStream.AsRandomAccessStream());
+                }
+            }
+            return tempBitamp;
         }
     }
 }

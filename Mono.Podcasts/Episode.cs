@@ -343,11 +343,9 @@ namespace Monosoftware.Podcast
         /// </summary>
         public bool IsPlayed
         {
-            get
-            {
+            get =>
                 // Needed to check to episodes where we do not have a valid duration.
-                return (Duration > TimeSpan.Zero && Duration == PlaybackPosition);
-            }
+                Duration > TimeSpan.Zero && Duration == PlaybackPosition;
             set
             {
                 if (value != IsPlayed)
@@ -457,7 +455,7 @@ namespace Monosoftware.Podcast
         /// Returns a value to show if the episode has been downloaded.
         /// </summary>
         /// <returns>True/False status of downloaded.</returns>
-        public bool IsDownloaded { get => Downloaded; }
+        public bool IsDownloaded => Downloaded;
         #endregion
     }
 }

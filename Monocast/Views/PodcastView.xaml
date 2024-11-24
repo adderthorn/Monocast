@@ -29,8 +29,8 @@
                         <AdaptiveTrigger MinWindowWidth="{StaticResource MediumWindowSnapPoint}"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="EpisodeListView.Width" Value="300"/>
-                        <Setter Target="EpisodeListView.MaxWidth" Value="300"/>
+                        <Setter Target="EpisodeListView.Width" Value="400"/>
+                        <Setter Target="EpisodeListView.MaxWidth" Value="400"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState>
@@ -171,7 +171,8 @@
                         </AppBarButton>
                         <AppBarButton Icon="Pin" Visibility="{x:Bind IsEpisodeSelected, Mode=OneWay}" Click="PinEpisode_Click"
                                       ToolTipService.ToolTip="Pin Episode"/>
-                        <!--<AppBarButton Icon="Download" Visibility="{x:Bind IsEpisodeSelected, Mode=OneWay}" Click="DownloadButton_Click"/>-->
+                        <!--<AppBarButton Icon="Download" Visibility="{x:Bind IsEpisodeSelected, Mode=OneWay}" Click="DownloadButton_Click"
+                                      ToolTipService.ToolTip="Download Episodes"/>-->
                     </CommandBar>
                 </Grid>
                 <ListView x:Name="EpisodeListView" DisplayMemberPath="Title" Grid.Row="1"

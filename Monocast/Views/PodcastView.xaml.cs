@@ -21,6 +21,7 @@ using System.Collections.ObjectModel;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.System;
 using Monocast.Services;
+using System.Diagnostics;
 
 namespace Monocast.Views
 {
@@ -406,6 +407,7 @@ namespace Monocast.Views
             int to = isChecked ? 0 : -20;
             SelectionEase.Children[0].SetValue(DoubleAnimation.FromProperty, from);
             SelectionEase.Children[0].SetValue(DoubleAnimation.ToProperty, to);
+            DownloadButton.IsEnabled = EpisodeButton.IsEnabled = DetailsButton.IsEnabled = !isChecked;
             SelectionEase.Begin();
         }
 
@@ -431,6 +433,7 @@ namespace Monocast.Views
 
         private void MarkEpisodeArchived_Click(object sender, RoutedEventArgs e)
         {
+            int lastSelectedIndex = EpisodeListView.Items.IndexOf(SelectedEpisodeListItem);
             if (EpisodesAllCheckBox.IsChecked != false)
             {
                 var items = EpisodeListView.Items.Where(el => (el as EpisodeListItem).Selected).ToList();
@@ -448,6 +451,7 @@ namespace Monocast.Views
             {
                 ToggleMarkEpisodeArchived(SelectedEpisodeListItem, e);
             }
+            HandleNoEpisodesSelected(lastSelectedIndex);
         }
 
         private void PinEpisode_Click(object sender, RoutedEventArgs e)
@@ -517,6 +521,27 @@ namespace Monocast.Views
                 NetworkInterface.GetIsNetworkAvailable())
             {
                 Artwork = clickedEpisodeListItem.Episode.Artwork.GetBestArtworkSoruce();
+            }
+        }
+
+        private void HandleNoEpisodesSelected(int lastSelectedIndex)
+        {
+            if (SelectedEpisodeListItem == null && EpisodeListView.Items.Count > 0 && lastSelectedIndex >= 0)
+            {
+                object nextSelectedItem;
+                if (EpisodeListView.Items.Count > lastSelectedIndex)
+                {
+                    nextSelectedItem = EpisodeListView.Items[lastSelectedIndex];
+                }
+                else
+                {
+                    nextSelectedItem = EpisodeListView.Items[lastSelectedIndex - 1];
+                }
+
+                if (nextSelectedItem != null)
+                {
+                    EpisodeListView.SelectedItem = nextSelectedItem;
+                }
             }
         }
     }
