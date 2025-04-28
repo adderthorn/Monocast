@@ -466,6 +466,7 @@ namespace Monosoftware.Podcast
             foreach (string uri in PodcastUris)
             {
                 Podcast podcast = await Podcast.GetPodcastAsync(uri);
+                subscriptions.AddPodcast(podcast);
             }
             subscriptions.GenerateEpisodeGuids(false);
             return subscriptions;

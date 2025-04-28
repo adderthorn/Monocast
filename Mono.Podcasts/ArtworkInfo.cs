@@ -87,7 +87,7 @@ namespace Monosoftware.Podcast
         /// Represents the same value as ArtworkReady, to show if the item is downloaded.
         /// </summary>
         /// <returns>True/False</returns>
-        public bool IsDownloaded { get => !isDisposed && areBytesReady; }
+        public bool IsDownloaded => !isDisposed && areBytesReady;
         #endregion Interface Implementations
 
         #region Public Methods
